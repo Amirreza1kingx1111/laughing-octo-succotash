@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>امانت کتاب | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(20, 184, 166, .12), transparent 30%),
+                #07141a;
+            color: #e8f4f3;
+        }
+
+        body {
+            min-height: 100vh;
+        }
+
+        a,
+        button {
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            user-select: none;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .page {
+            width: min(1200px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 28px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 26px;
+        }
+
+        .title-area h1 {
+            margin: 0;
+            font-size: clamp(25px, 5vw, 36px);
+            font-weight: 800;
+        }
+
+        .title-area p {
+            margin: 8px 0 0;
+            color: #8fa9ad;
+            font-size: 14px;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 11px 17px;
+            border: 1px solid rgba(94, 234, 212, .22);
+            border-radius: 13px;
+            color: #9ff8e9;
+            background: rgba(20, 184, 166, .07);
+            text-decoration: none;
+            font-size: 14px;
+            transition: .2s;
+        }
+
+        .back:hover {
+            background: rgba(20, 184, 166, .14);
+            transform: translateY(-1px);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 30px;
+            border: 1px solid rgba(94, 234, 212, .16);
+            border-radius: 22px;
+            background:
+                linear-gradient(145deg,
+                    rgba(15, 48, 56, .95),
+                    rgba(7, 25, 32, .96));
+            box-shadow: 0 20px 55px rgba(0, 0, 0, .25);
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            left: -90px;
+            bottom: -130px;
+            border-radius: 50%;
+            background: rgba(20, 184, 166, .09);
+            filter: blur(20px);
+        }
+
+        .hero h2 {
+            position: relative;
+            z-index: 1;
+            margin: 0 0 8px;
+            font-size: 23px;
+            font-weight: 800;
+        }
+
+        .hero p {
+            position: relative;
+            z-index: 1;
+            margin: 0;
+            max-width: 720px;
+            line-height: 2;
+            color: #a9c0c3;
+            font-size: 14px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 20px;
+        }
+
+        .card {
+            padding: 22px;
+            border: 1px solid rgba(148, 163, 184, .12);
+            border-radius: 18px;
+            background: rgba(11, 31, 38, .9);
+        }
+
+        .card .label {
+            color: #88a3a7;
+            font-size: 13px;
+        }
+
+        .card .value {
+            margin-top: 9px;
+            font-size: 27px;
+            font-weight: 800;
+        }
+
+        .section {
+            margin-top: 20px;
+            padding: 24px;
+            border: 1px solid rgba(148, 163, 184, .12);
+            border-radius: 20px;
+            background: rgba(8, 27, 34, .92);
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 800;
+        }
+
+        .section-desc {
+            margin: 7px 0 20px;
+            color: #849da1;
+            font-size: 13px;
+        }
+
+        .empty {
+            padding: 35px 20px;
+            text-align: center;
+            border: 1px dashed rgba(94, 234, 212, .18);
+            border-radius: 16px;
+            color: #7f999d;
+        }
+
+        @media (max-width: 800px) {
+            .cards {
+                grid-template-columns: 1fr;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .hero,
+            .section {
+                padding: 20px;
+            }
+
+            .back {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+
+        <a class="back"
+           href="{{ url_for('admin.loan_create') }}">
+            ثبت امانت جدید
+        </a>
+
+        <div class="title-area">
+            <h1>امانت کتاب</h1>
+            <p>مدیریت امانت، بازگشت و وضعیت کتاب‌های کتابخانه</p>
+        </div>
+
+        <a class="back"
+           href="{{ url_for('admin.dashboard') }}">
+            بازگشت به مدیریت
+        </a>
+
+    </div>
+
+    <section class="hero">
+
+        <h2>سامانه مدیریت امانت</h2>
+
+        <p>
+            این بخش برای ثبت، پیگیری و مدیریت امانت کتاب‌ها طراحی شده است.
+            ساختار فعلی آماده اتصال به فهرست واقعی کتاب‌ها و اعضای کتابخانه است.
+        </p>
+
+    </section>
+
+    <section class="cards">
+
+        <div class="card">
+            <div class="label">امانت‌های فعال</div>
+            <div class="value">۰</div>
+        </div>
+
+        <div class="card">
+            <div class="label">بازگشت داده‌شده</div>
+            <div class="value">۰</div>
+        </div>
+
+        <div class="card">
+            <div class="label">دیرکرد</div>
+            <div class="value">۰</div>
+        </div>
+
+    </section>
+
+    <section class="section">
+
+        <h2 class="section-title">
+            فهرست امانت‌ها
+        </h2>
+
+        <p class="section-desc">
+            پس از اتصال دیتابیس امانت‌ها، اطلاعات ثبت‌شده در این قسمت نمایش داده می‌شود.
+        </p>
+
+        <div class="empty">
+            هنوز هیچ امانتی ثبت نشده است.
+        </div>
+
+    </section>
+
+</div>
+
+</body>
+</html>

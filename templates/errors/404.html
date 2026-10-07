@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>صفحه پیدا نشد</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #07151a;
+            color: #e8ffff;
+            font-family: sans-serif;
+        }
+
+        .box {
+            width: min(92%, 520px);
+            padding: 40px 28px;
+            text-align: center;
+            border: 1px solid #164b52;
+            border-radius: 22px;
+            background: #0b2026;
+            box-shadow: 0 20px 60px rgba(0,0,0,.4);
+        }
+
+        .code {
+            font-size: 72px;
+            font-weight: 800;
+            margin-bottom: 10px;
+        }
+
+        h1 {
+            margin: 0 0 12px;
+        }
+
+        p {
+            color: #a9c5c9;
+            line-height: 1.9;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 12px 22px;
+            border-radius: 12px;
+            background: #0d8b91;
+            color: white;
+            text-decoration: none;
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+</head>
+
+<body>
+    <main class="box">
+        <div class="code">404</div>
+        <h1>صفحه پیدا نشد</h1>
+        <p>
+            آدرسی که وارد کرده‌اید وجود ندارد یا جابه‌جا شده است.
+        </p>
+        <a href="/">بازگشت به صفحه اصلی</a>
+    </main>
+</body>
+</html>

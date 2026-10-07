@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>ورود مدیر | کتابخانه ۱۳ آبان</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, #164e63 0, transparent 35%),
+                radial-gradient(circle at bottom left, #0f766e 0, transparent 30%),
+                #07111f;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            color: #f8fafc;
+        }
+
+        .page {
+            width: min(430px, calc(100% - 32px));
+        }
+
+        .card {
+            background: rgba(15, 23, 42, 0.94);
+            border: 1px solid rgba(148, 163, 184, 0.18);
+            border-radius: 24px;
+            padding: 34px;
+
+            box-shadow:
+                0 30px 80px rgba(0, 0, 0, 0.45),
+                inset 0 1px 0 rgba(255, 255, 255, 0.05);
+
+            backdrop-filter: blur(18px);
+        }
+
+        .brand {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .brand-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 18px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 20px;
+
+            background: linear-gradient(
+                135deg,
+                #0f766e,
+                #155e75
+            );
+
+            box-shadow:
+                0 14px 35px rgba(13, 148, 136, 0.25);
+        }
+
+        .brand-icon span {
+            font-size: 32px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            font-size: 24px;
+        }
+
+        .subtitle {
+            margin: 0;
+            color: #94a3b8;
+            font-size: 14px;
+        }
+
+        .alert {
+            padding: 12px 14px;
+            margin-bottom: 18px;
+
+            border-radius: 12px;
+
+            background: rgba(127, 29, 29, 0.25);
+            border: 1px solid rgba(248, 113, 113, 0.25);
+
+            color: #fecaca;
+            font-size: 13px;
+        }
+
+        .field {
+            margin-bottom: 18px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+
+            font-size: 14px;
+            color: #cbd5e1;
+        }
+
+        input {
+            width: 100%;
+            padding: 14px 15px;
+
+            border: 1px solid #334155;
+            border-radius: 13px;
+
+            background: #0b1220;
+            color: #f8fafc;
+
+            outline: none;
+
+            font-family: inherit;
+            font-size: 15px;
+
+            transition:
+                border-color 0.2s,
+                box-shadow 0.2s;
+        }
+
+        input:focus {
+            border-color: #14b8a6;
+
+            box-shadow:
+                0 0 0 3px rgba(20, 184, 166, 0.12);
+        }
+
+        .error {
+            margin-top: 6px;
+
+            color: #fca5a5;
+            font-size: 12px;
+        }
+
+        button {
+            width: 100%;
+            padding: 14px;
+
+            border: 0;
+            border-radius: 13px;
+
+            background: linear-gradient(
+                135deg,
+                #0f766e,
+                #0891b2
+            );
+
+            color: white;
+
+            font-family: inherit;
+            font-size: 15px;
+            font-weight: bold;
+
+            cursor: pointer;
+
+            transition:
+                transform 0.15s,
+                box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+
+            box-shadow:
+                0 12px 25px rgba(8, 145, 178, 0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .back {
+            display: block;
+
+            margin-top: 20px;
+
+            text-align: center;
+
+            color: #94a3b8;
+            text-decoration: none;
+
+            font-size: 13px;
+        }
+
+        .back:hover {
+            color: #5eead4;
+        }
+
+        .footer {
+            margin-top: 22px;
+
+            text-align: center;
+
+            color: #64748b;
+            font-size: 11px;
+        }
+
+        @media (max-width: 480px) {
+            .card {
+                padding: 26px 20px;
+            }
+
+            h1 {
+                font-size: 21px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/motion.css') }}">
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="card">
+
+        <div class="brand">
+
+            <div class="brand-icon">
+                <span>▣</span>
+            </div>
+
+            <h1>ورود مدیر</h1>
+
+            <p class="subtitle">
+                سامانه ثبت کتاب کتابخانه ۱۳ آبان
+            </p>
+
+        </div>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                {% for category, message in messages %}
+
+                    <div class="alert">
+                        {{ message }}
+                    </div>
+
+                {% endfor %}
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form method="POST" novalidate>
+
+            {{ form.hidden_tag() }}
+
+
+            <div class="field">
+
+                {{ form.username.label }}
+
+                {{ form.username(
+                    id="username",
+                    autocomplete="username",
+                    placeholder="نام کاربری"
+                ) }}
+
+                {% for error in form.username.errors %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            <div class="field">
+
+                {{ form.password.label }}
+
+                {{ form.password(
+                    id="password",
+                    autocomplete="current-password",
+                    placeholder="رمز عبور"
+                ) }}
+
+                {% for error in form.password.errors %}
+                    <div class="error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+
+            {{ form.submit() }}
+
+        </form>
+
+
+        <a class="back" href="{{ url_for('home') }}">
+            بازگشت به صفحه اصلی
+        </a>
+
+    </div>
+
+
+    <div class="footer">
+        کتابخانه ۱۳ آبان
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,8837 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>داشبورد مدیریت | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        :root {
+            --bg: #031317;
+            --bg-soft: #061d23;
+            --panel: rgba(9, 36, 43, .92);
+            --panel-strong: rgba(12, 47, 55, .96);
+            --border: rgba(91, 224, 214, .13);
+            --border-strong: rgba(91, 224, 214, .30);
+            --accent: #55e6d5;
+            --accent-soft: #9af4ec;
+            --text: #effffd;
+            --muted: #91aaad;
+            --danger: #ff7f8a;
+            --danger-soft: rgba(255, 127, 138, .10);
+            --success: #65d99b;
+            --shadow: 0 18px 45px rgba(0,0,0,.30);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html {
+            min-height: 100%;
+            background: var(--bg);
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            color: var(--text);
+            font-family: Vazirmatn, sans-serif;
+            background:
+                radial-gradient(
+                    circle at 85% 5%,
+                    rgba(53, 194, 185, .12),
+                    transparent 25%
+                ),
+                radial-gradient(
+                    circle at 5% 95%,
+                    rgba(18, 104, 116, .10),
+                    transparent 28%
+                ),
+                linear-gradient(
+                    145deg,
+                    #031317,
+                    #061e25 50%,
+                    #021013
+                );
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        input {
+            font-family: inherit;
+        }
+
+        .layout {
+            min-height: 100vh;
+            display: grid;
+            grid-template-columns: 275px minmax(0, 1fr);
+        }
+
+        /* Sidebar */
+
+        .sidebar {
+            position: sticky;
+            top: 0;
+            height: 100vh;
+            padding: 20px 16px;
+            overflow-y: auto;
+
+            background:
+                linear-gradient(
+                    160deg,
+                    rgba(7, 37, 45, .98),
+                    rgba(2, 17, 22, .99)
+                );
+
+            border-left: 1px solid var(--border);
+            box-shadow: 12px 0 40px rgba(0,0,0,.25);
+        }
+
+        .brand {
+            padding: 19px;
+            margin-bottom: 22px;
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(255,255,255,.045),
+                    rgba(0,0,0,.15)
+                );
+
+            box-shadow: var(--shadow);
+        }
+
+        .brand-title {
+            font-size: 20px;
+            font-weight: 900;
+        }
+
+        .brand-subtitle {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .nav-title {
+            margin: 20px 11px 9px;
+            color: #739497;
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        .nav {
+            display: grid;
+            gap: 7px;
+        }
+
+        .nav a {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            min-height: 62px;
+            padding: 9px 11px;
+
+            border: 1px solid transparent;
+            border-radius: 15px;
+
+            color: #b8cdce;
+            transition:
+                transform .18s ease,
+                background .18s ease,
+                border-color .18s ease,
+                color .18s ease;
+        }
+
+        .nav a:hover {
+            transform: translateX(-3px);
+            color: white;
+            background: rgba(85,230,213,.055);
+            border-color: var(--border);
+        }
+
+        .nav a.active {
+            color: white;
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(28, 82, 90, .90),
+                    rgba(7, 39, 47, .96)
+                );
+            border-color: var(--border-strong);
+            box-shadow:
+                inset -3px 0 var(--accent),
+                8px 10px 24px rgba(0,0,0,.25);
+        }
+
+        .nav-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 13px;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(85,230,213,.10);
+        }
+
+        .nav-icon img {
+            width: 32px;
+            height: 32px;
+            object-fit: contain;
+        }
+
+        .logout {
+            color: #ef9aa2 !important;
+        }
+
+        /* Main */
+
+        .main {
+            width: 100%;
+            max-width: 1550px;
+            padding: 30px;
+        }
+
+        .topbar {
+            position: relative;
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+
+            padding: 25px 27px;
+            margin-bottom: 20px;
+
+            border: 1px solid var(--border);
+            border-radius: 24px;
+
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(14,57,67,.95),
+                    rgba(5,28,35,.98)
+                );
+
+            box-shadow: var(--shadow);
+        }
+
+        .topbar::after {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(85,230,213,.55),
+                transparent
+            );
+        }
+
+        .welcome h1 {
+            margin: 0;
+            font-size: clamp(25px, 4vw, 37px);
+            font-weight: 900;
+        }
+
+        .welcome p {
+            margin: 8px 0 0;
+            color: var(--muted);
+            line-height: 2;
+            font-size: 13px;
+        }
+
+        .admin-badge {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+
+            padding: 11px 15px;
+            white-space: nowrap;
+
+            border: 1px solid var(--border);
+            border-radius: 14px;
+
+            color: var(--accent-soft);
+            background: rgba(255,255,255,.035);
+        }
+
+        .admin-badge img {
+            width: 22px;
+            height: 22px;
+        }
+
+        /* Stats */
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 15px;
+        }
+
+        .stat {
+            position: relative;
+            overflow: hidden;
+
+            padding: 21px;
+
+            border: 1px solid var(--border);
+            border-radius: 20px;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(15,53,61,.97),
+                    rgba(5,29,36,.98)
+                );
+
+            box-shadow: 10px 13px 28px rgba(0,0,0,.30);
+
+            transition:
+                transform .18s ease,
+                border-color .18s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-4px);
+            border-color: var(--border-strong);
+        }
+
+        .stat-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+        }
+
+        .stat-icon {
+            width: 50px;
+            height: 50px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 15px;
+            background: rgba(85,230,213,.07);
+            border: 1px solid rgba(85,230,213,.12);
+        }
+
+        .stat-icon img {
+            width: 38px;
+            height: 38px;
+            object-fit: contain;
+        }
+
+        .stat-label {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .stat-value {
+            margin-top: 13px;
+            font-size: 31px;
+            font-weight: 900;
+        }
+
+        .stat-description {
+            margin-top: 5px;
+            color: #779396;
+            font-size: 11px;
+        }
+
+        /* Warning */
+
+        .alerts {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 15px;
+            margin-top: 16px;
+        }
+
+        .alert {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            padding: 18px 20px;
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            background: var(--panel);
+            box-shadow: 8px 10px 25px rgba(0,0,0,.25);
+        }
+
+        .alert.danger {
+            border-color: rgba(255,127,138,.22);
+            background:
+                linear-gradient(
+                    135deg,
+                    rgba(72,29,38,.55),
+                    rgba(20,31,36,.90)
+                );
+        }
+
+        .alert-title {
+            font-weight: 800;
+        }
+
+        .alert-text {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .alert-number {
+            font-size: 27px;
+            font-weight: 900;
+            color: var(--accent-soft);
+        }
+
+        .danger .alert-number {
+            color: var(--danger);
+        }
+
+        /* Content grid */
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1.25fr) minmax(320px, .75fr);
+            gap: 17px;
+            margin-top: 24px;
+        }
+
+        .panel {
+            border: 1px solid var(--border);
+            border-radius: 21px;
+            overflow: hidden;
+
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(11,45,53,.94),
+                    rgba(5,27,34,.97)
+                );
+
+            box-shadow: 10px 13px 30px rgba(0,0,0,.27);
+        }
+
+        .panel-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            padding: 19px 20px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .panel-subtitle {
+            margin-top: 4px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .panel-link {
+            color: var(--accent-soft);
+            font-size: 12px;
+        }
+
+        /* Recent loans */
+
+        .loan-list {
+            display: grid;
+        }
+
+        .loan-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+
+            padding: 16px 20px;
+            border-bottom: 1px solid rgba(255,255,255,.045);
+        }
+
+        .loan-item:last-child {
+            border-bottom: 0;
+        }
+
+        .loan-main {
+            min-width: 0;
+        }
+
+        .loan-id {
+            font-weight: 800;
+        }
+
+        .loan-meta {
+            margin-top: 5px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .status {
+            flex: 0 0 auto;
+
+            padding: 7px 10px;
+            border-radius: 10px;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            background: rgba(101,217,155,.08);
+            border: 1px solid rgba(101,217,155,.13);
+            color: var(--success);
+        }
+
+        .status.overdue {
+            color: var(--danger);
+            background: var(--danger-soft);
+            border-color: rgba(255,127,138,.17);
+        }
+
+        .empty {
+            padding: 35px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        /* Quick actions */
+
+        .quick-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0,1fr));
+            gap: 10px;
+            padding: 16px;
+        }
+
+        .quick {
+            min-height: 115px;
+
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 9px;
+
+            padding: 15px;
+
+            border: 1px solid var(--border);
+            border-radius: 16px;
+
+            background: rgba(255,255,255,.022);
+
+            transition:
+                transform .18s ease,
+                border-color .18s ease,
+                background .18s ease;
+        }
+
+        .quick:hover {
+            transform: translateY(-3px);
+            border-color: var(--border-strong);
+            background: rgba(85,230,213,.045);
+        }
+
+        .quick-icon {
+            width: 38px;
+            height: 38px;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border-radius: 11px;
+            background: rgba(85,230,213,.065);
+        }
+
+        .quick-icon img {
+            width: 28px;
+            height: 28px;
+        }
+
+        .quick-title {
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        /* System */
+
+        .system {
+            margin-top: 17px;
+            padding: 18px 20px;
+
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            border: 1px solid var(--border);
+            border-radius: 18px;
+
+            background: rgba(8,34,41,.85);
+        }
+
+        .online {
+            width: 10px;
+            height: 10px;
+            flex: 0 0 10px;
+
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 13px rgba(101,217,155,.50);
+        }
+
+        .system-title {
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .system-text {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        /* Responsive */
+
+        @media (max-width: 1100px) {
+            .layout {
+                grid-template-columns: 235px minmax(0,1fr);
+            }
+
+            .main {
+                padding: 22px;
+            }
+
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 850px) {
+            .layout {
+                display: block;
+            }
+
+            .sidebar {
+                position: static;
+                height: auto;
+                border-left: 0;
+                border-bottom: 1px solid var(--border);
+            }
+
+            .nav {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+
+            .nav-title {
+                margin-top: 13px;
+            }
+
+            .stats {
+                grid-template-columns: repeat(2, minmax(0,1fr));
+            }
+        }
+
+        @media (max-width: 600px) {
+            .main {
+                padding: 13px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+                padding: 19px;
+                border-radius: 19px;
+            }
+
+            .admin-badge {
+                width: 100%;
+            }
+
+            .stats,
+            .alerts {
+                grid-template-columns: 1fr;
+            }
+
+            .nav {
+                grid-template-columns: 1fr;
+            }
+
+            .quick-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .loan-item {
+                align-items: flex-start;
+            }
+        }
+
+        @media (max-width: 390px) {
+            .quick-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .main {
+                padding: 10px;
+            }
+        }
+    
+/* ===== PROFESSIONAL RESPONSIVE MENU ===== */
+
+.menu-toggle {
+    position: fixed;
+    top: 18px;
+    right: 18px;
+    z-index: 1200;
+
+    width: 48px;
+    height: 48px;
+
+    display: none;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border-strong);
+    border-radius: 15px;
+
+    color: var(--accent-soft);
+    background: rgba(5, 29, 36, .94);
+    box-shadow: 0 12px 30px rgba(0,0,0,.35);
+
+    cursor: pointer;
+    backdrop-filter: blur(12px);
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease;
+}
+
+.menu-toggle:hover {
+    transform: translateY(-2px);
+    background: rgba(15, 57, 67, .98);
+}
+
+.menu-toggle:active {
+    transform: scale(.94);
+}
+
+.menu-toggle-lines {
+    width: 21px;
+    height: 16px;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.menu-toggle-lines span {
+    width: 100%;
+    height: 2px;
+
+    border-radius: 5px;
+    background: currentColor;
+
+    transition:
+        transform .22s ease,
+        opacity .18s ease;
+}
+
+.layout.menu-open .menu-toggle-lines span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+.layout.menu-open .menu-toggle-lines span:nth-child(2) {
+    opacity: 0;
+}
+
+.layout.menu-open .menu-toggle-lines span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+.sidebar-collapse {
+    position: absolute;
+    top: 19px;
+    left: 15px;
+
+    width: 38px;
+    height: 38px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 12px;
+
+    color: var(--muted);
+    background: rgba(255,255,255,.025);
+
+    cursor: pointer;
+    transition: .2s ease;
+}
+
+.sidebar-collapse:hover {
+    color: var(--accent-soft);
+    border-color: var(--border-strong);
+    background: rgba(85,230,213,.06);
+}
+
+.menu-overlay {
+    display: none;
+}
+
+.layout.desktop-collapsed {
+    grid-template-columns: 88px minmax(0,1fr);
+}
+
+.layout.desktop-collapsed .sidebar {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.layout.desktop-collapsed .brand-title,
+.layout.desktop-collapsed .brand-subtitle,
+.layout.desktop-collapsed .nav-title,
+.layout.desktop-collapsed .nav a > span:last-child {
+    display: none;
+}
+
+.layout.desktop-collapsed .brand {
+    padding: 12px;
+    min-height: 58px;
+}
+
+.layout.desktop-collapsed .brand::before {
+    content: "۱۳";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 100%;
+    height: 32px;
+
+    color: var(--accent-soft);
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.layout.desktop-collapsed .nav a {
+    justify-content: center;
+    min-height: 58px;
+    padding: 7px;
+}
+
+.layout.desktop-collapsed .nav-icon {
+    width: 42px;
+    min-width: 42px;
+}
+
+.layout.desktop-collapsed .sidebar-collapse {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.layout.desktop-collapsed .sidebar-collapse {
+    font-size: 0;
+}
+
+.layout.desktop-collapsed .sidebar-collapse::after {
+    content: "›";
+    font-size: 25px;
+    line-height: 1;
+    color: var(--accent-soft);
+}
+
+.layout.desktop-collapsed .nav a.active {
+    box-shadow:
+        inset 0 0 0 1px var(--border-strong),
+        0 8px 22px rgba(0,0,0,.22);
+}
+
+@media (min-width: 851px) {
+    .sidebar {
+        transition:
+            padding .25s ease,
+            width .25s ease;
+    }
+
+    .layout {
+        transition: grid-template-columns .25s ease;
+    }
+
+    .main {
+        min-width: 0;
+    }
+}
+
+@media (max-width: 850px) {
+    .menu-toggle {
+        display: flex;
+    }
+
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        position: fixed;
+        z-index: 1100;
+
+        top: 0;
+        right: 0;
+
+        width: min(310px, 86vw);
+        height: 100dvh;
+
+        padding: 20px 16px;
+
+        border-left: 1px solid var(--border-strong);
+        border-bottom: 0;
+
+        transform: translateX(105%);
+        transition: transform .28s cubic-bezier(.22,.8,.25,1);
+
+        box-shadow: -20px 0 60px rgba(0,0,0,.45);
+    }
+
+    .layout.menu-open .sidebar {
+        transform: translateX(0);
+    }
+
+    .menu-overlay {
+        position: fixed;
+        z-index: 1050;
+
+        inset: 0;
+
+        display: block;
+
+        background: rgba(0,0,0,.58);
+        backdrop-filter: blur(3px);
+
+        opacity: 0;
+        visibility: hidden;
+
+        transition:
+            opacity .25s ease,
+            visibility .25s ease;
+    }
+
+    .layout.menu-open .menu-overlay {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar-collapse {
+        display: none;
+    }
+
+    .main {
+        width: 100%;
+        padding-top: 82px;
+    }
+
+    .layout.desktop-collapsed {
+        display: block;
+    }
+
+    .layout.desktop-collapsed .brand-title,
+    .layout.desktop-collapsed .brand-subtitle,
+    .layout.desktop-collapsed .nav-title,
+    .layout.desktop-collapsed .nav a > span:last-child {
+        display: initial;
+    }
+
+    .layout.desktop-collapsed .brand::before {
+        display: none;
+    }
+
+    .layout.desktop-collapsed .nav a {
+        justify-content: flex-start;
+        min-height: 62px;
+        padding: 9px 11px;
+    }
+}
+
+@media (max-width: 600px) {
+    .menu-toggle {
+        top: 14px;
+        right: 14px;
+
+        width: 46px;
+        height: 46px;
+    }
+
+    .main {
+        padding-top: 73px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
+
+    
+/* =========================================================
+   KETABMADRESE — HYPER UI / VISUAL ENGINE 1.0
+   ========================================================= */
+
+:root {
+    --hyper-cyan: #62fff0;
+    --hyper-blue: #5aa7ff;
+    --hyper-purple: #9b7cff;
+    --hyper-bg: #02080d;
+}
+
+/* ---------- Dynamic environment ---------- */
+
+body {
+    position: relative;
+    overflow-x: hidden;
+    background:
+        radial-gradient(
+            circle at 12% 18%,
+            rgba(98,255,240,.09),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 86% 12%,
+            rgba(91,132,255,.08),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 72% 82%,
+            rgba(155,124,255,.06),
+            transparent 32%
+        ),
+        var(--bg);
+}
+
+/* animated light field */
+body::before {
+    content: "";
+    position: fixed;
+    inset: -25%;
+    pointer-events: none;
+    z-index: -3;
+
+    background:
+        radial-gradient(
+            circle at 30% 40%,
+            rgba(98,255,240,.10),
+            transparent 18%
+        ),
+        radial-gradient(
+            circle at 70% 60%,
+            rgba(91,132,255,.08),
+            transparent 20%
+        );
+
+    filter: blur(55px);
+    animation: hyperLightDrift 18s ease-in-out infinite alternate;
+}
+
+@keyframes hyperLightDrift {
+    0% {
+        transform: translate3d(-4%, -3%, 0) scale(1);
+    }
+    50% {
+        transform: translate3d(5%, 3%, 0) scale(1.08);
+    }
+    100% {
+        transform: translate3d(-2%, 6%, 0) scale(1.03);
+    }
+}
+
+/* ---------- floating ambient orbs ---------- */
+
+body::after {
+    content: "";
+    position: fixed;
+    width: 420px;
+    height: 420px;
+    right: 4%;
+    bottom: -180px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -2;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(98,255,240,.075) 0%,
+            rgba(98,255,240,.025) 35%,
+            transparent 70%
+        );
+
+    filter: blur(18px);
+    animation: hyperOrb 13s ease-in-out infinite alternate;
+}
+
+@keyframes hyperOrb {
+    from {
+        transform: translate3d(0,0,0) scale(.9);
+    }
+    to {
+        transform: translate3d(-90px,-120px,0) scale(1.15);
+    }
+}
+
+/* ---------- futuristic grid ---------- */
+
+.main {
+    position: relative;
+}
+
+.main::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: -1;
+
+    opacity: .20;
+
+    background-image:
+        linear-gradient(
+            rgba(98,255,240,.025) 1px,
+            transparent 1px
+        ),
+        linear-gradient(
+            90deg,
+            rgba(98,255,240,.025) 1px,
+            transparent 1px
+        );
+
+    background-size: 44px 44px;
+
+    mask-image:
+        radial-gradient(
+            ellipse at center,
+            black 0%,
+            transparent 78%
+        );
+}
+
+/* ---------- glass depth ---------- */
+
+.sidebar,
+.topbar,
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+/* ---------- animated edge light ---------- */
+
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    box-shadow:
+        0 20px 60px rgba(0,0,0,.25),
+        inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+.stat-card::before,
+.alert-card::before,
+.section::before,
+.status-card::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -120%;
+    width: 65%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(98,255,240,.75),
+            transparent
+        );
+
+    filter: blur(.3px);
+    opacity: .75;
+
+    animation: hyperEdgeSweep 7s linear infinite;
+}
+
+@keyframes hyperEdgeSweep {
+    0% {
+        left: -120%;
+    }
+    100% {
+        left: 150%;
+    }
+}
+
+/* ---------- stat cards ---------- */
+
+.stat-card {
+    transform: translateZ(0);
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        box-shadow .35s ease,
+        border-color .35s ease;
+}
+
+.stat-card:hover {
+    transform:
+        translateY(-7px)
+        scale(1.015);
+
+    border-color:
+        rgba(98,255,240,.30);
+
+    box-shadow:
+        0 25px 70px rgba(0,0,0,.34),
+        0 0 35px rgba(98,255,240,.055),
+        inset 0 1px 0 rgba(255,255,255,.06);
+}
+
+/* ---------- subtle rotating geometry ---------- */
+
+.stat-card::after {
+    content: "";
+    position: absolute;
+
+    width: 70px;
+    height: 70px;
+
+    left: -28px;
+    bottom: -30px;
+
+    border: 1px solid rgba(98,255,240,.09);
+    border-radius: 18px;
+
+    transform: rotate(45deg);
+    pointer-events: none;
+
+    animation: hyperGeometry 14s linear infinite;
+}
+
+@keyframes hyperGeometry {
+    from {
+        transform: rotate(45deg);
+    }
+    to {
+        transform: rotate(405deg);
+    }
+}
+
+/* ---------- topbar ---------- */
+
+.topbar {
+    box-shadow:
+        0 12px 45px rgba(0,0,0,.20),
+        inset 0 1px 0 rgba(255,255,255,.035);
+}
+
+/* ---------- sidebar ---------- */
+
+.sidebar {
+    box-shadow:
+        18px 0 70px rgba(0,0,0,.25),
+        inset -1px 0 rgba(98,255,240,.035);
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    top: 8%;
+    right: -45px;
+
+    width: 90px;
+    height: 240px;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(98,255,240,.07),
+            transparent 70%
+        );
+
+    filter: blur(18px);
+    pointer-events: none;
+
+    animation: sidebarGlow 8s ease-in-out infinite alternate;
+}
+
+@keyframes sidebarGlow {
+    from {
+        transform: translateY(-20px);
+        opacity: .45;
+    }
+    to {
+        transform: translateY(180px);
+        opacity: .9;
+    }
+}
+
+/* ---------- menu interaction ---------- */
+
+.nav a {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+.nav a::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    right: -3px;
+    width: 2px;
+
+    background:
+        linear-gradient(
+            transparent,
+            var(--hyper-cyan),
+            transparent
+        );
+
+    transform: scaleY(0);
+    transition: transform .3s ease;
+}
+
+.nav a:hover {
+    transform: translateX(-3px);
+}
+
+.nav a:hover::after,
+.nav a.active::after {
+    transform: scaleY(1);
+}
+
+/* ---------- reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+        scroll-behavior: auto !important;
+    }
+}
+
+/* ---------- mobile performance ---------- */
+
+@media (max-width: 700px) {
+    body::before {
+        filter: blur(35px);
+    }
+
+    body::after {
+        width: 260px;
+        height: 260px;
+        filter: blur(15px);
+    }
+
+    .main::before {
+        background-size: 34px 34px;
+        opacity: .12;
+    }
+
+    .stat-card::after {
+        opacity: .55;
+    }
+}
+
+
+/* ===== NEXUS CORE 1.0 ===== */
+
+:root {
+    --nx-cyan: #5ffff0;
+    --nx-blue: #5b9cff;
+    --nx-violet: #9b7cff;
+}
+
+body {
+    isolation: isolate;
+    overflow-x: hidden;
+    background:
+        radial-gradient(circle at 15% 20%, rgba(95,255,240,.075), transparent 25%),
+        radial-gradient(circle at 85% 15%, rgba(91,156,255,.07), transparent 28%),
+        radial-gradient(circle at 70% 85%, rgba(155,124,255,.055), transparent 30%),
+        var(--bg);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: -35%;
+    z-index: -5;
+    pointer-events: none;
+    background:
+        radial-gradient(ellipse at 25% 35%, rgba(95,255,240,.13), transparent 17%),
+        radial-gradient(ellipse at 75% 65%, rgba(91,156,255,.10), transparent 19%),
+        radial-gradient(ellipse at 55% 15%, rgba(155,124,255,.07), transparent 16%);
+    filter: blur(70px);
+    animation: nxAtmosphere 24s ease-in-out infinite alternate;
+}
+
+@keyframes nxAtmosphere {
+    0% { transform: translate3d(-4%,-3%,0) scale(1); }
+    50% { transform: translate3d(5%,3%,0) scale(1.08); }
+    100% { transform: translate3d(-2%,6%,0) scale(1.03); }
+}
+
+.main {
+    position: relative;
+    isolation: isolate;
+}
+
+.main::before {
+    content: "";
+    position: absolute;
+    inset: -30px;
+    z-index: -3;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(95,255,240,.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(95,255,240,.028) 1px, transparent 1px);
+    background-size: 52px 52px;
+    mask-image: radial-gradient(ellipse at center, black, transparent 72%);
+    animation: nxGrid 28s linear infinite;
+}
+
+@keyframes nxGrid {
+    to {
+        background-position: 52px 52px, 52px 52px;
+    }
+}
+
+.main::after {
+    content: "";
+    position: fixed;
+    width: 380px;
+    height: 380px;
+    left: 8%;
+    bottom: -190px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: -2;
+    background: radial-gradient(
+        circle,
+        rgba(95,255,240,.10),
+        rgba(95,255,240,.025) 35%,
+        transparent 70%
+    );
+    filter: blur(15px);
+    animation: nxOrb 16s ease-in-out infinite alternate;
+}
+
+@keyframes nxOrb {
+    to {
+        transform: translate3d(180px,-170px,0) scale(1.25);
+    }
+}
+
+.topbar,
+.sidebar,
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    backdrop-filter: blur(22px) saturate(135%);
+    -webkit-backdrop-filter: blur(22px) saturate(135%);
+}
+
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
+    box-shadow:
+        0 18px 55px rgba(0,0,0,.22),
+        inset 0 1px 0 rgba(255,255,255,.045);
+    transition:
+        transform .45s cubic-bezier(.2,.8,.2,1),
+        box-shadow .45s ease,
+        border-color .45s ease;
+}
+
+.stat-card::before,
+.alert-card::before,
+.section::before,
+.status-card::before {
+    content: "";
+    position: absolute;
+    width: 80%;
+    height: 1px;
+    top: 0;
+    left: -100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(95,255,240,.9),
+        rgba(91,156,255,.55),
+        transparent
+    );
+    box-shadow: 0 0 12px rgba(95,255,240,.35);
+    animation: nxBeam 6.5s linear infinite;
+    pointer-events: none;
+}
+
+@keyframes nxBeam {
+    to { left: 130%; }
+}
+
+.stat-card {
+    transform-style: preserve-3d;
+}
+
+.stat-card:hover {
+    transform: translateY(-8px) scale(1.012);
+    border-color: rgba(95,255,240,.28);
+    box-shadow:
+        0 28px 80px rgba(0,0,0,.34),
+        0 0 35px rgba(95,255,240,.065),
+        inset 0 1px 0 rgba(255,255,255,.07);
+}
+
+.sidebar {
+    overflow: hidden;
+}
+
+.sidebar::before {
+    content: "";
+    position: absolute;
+    width: 120px;
+    height: 360px;
+    right: -75px;
+    top: 8%;
+    background: radial-gradient(
+        ellipse,
+        rgba(95,255,240,.10),
+        transparent 68%
+    );
+    filter: blur(20px);
+    pointer-events: none;
+    animation: nxSidebarLight 11s ease-in-out infinite alternate;
+}
+
+@keyframes nxSidebarLight {
+    to {
+        transform: translateY(320px) scale(1.15);
+    }
+}
+
+.nav a {
+    position: relative;
+    overflow: hidden;
+    transition:
+        transform .28s ease,
+        background .28s ease,
+        box-shadow .28s ease;
+}
+
+.nav a:hover {
+    transform: translateX(-4px);
+}
+
+.nav a::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    top: 12%;
+    bottom: 12%;
+    width: 2px;
+    border-radius: 5px;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        var(--nx-cyan),
+        transparent
+    );
+    box-shadow: 0 0 12px rgba(95,255,240,.55);
+    transform: scaleY(0);
+    transition: transform .3s ease;
+}
+
+.nav a:hover::after,
+.nav a.active::after {
+    transform: scaleY(1);
+}
+
+.topbar {
+    position: relative;
+    overflow: hidden;
+}
+
+.topbar::after {
+    content: "";
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    bottom: 0;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(95,255,240,.5),
+        rgba(91,156,255,.35),
+        transparent
+    );
+    animation: nxTopline 8s linear infinite;
+}
+
+@keyframes nxTopline {
+    to { transform: translateX(35%); }
+}
+
+@media (max-width: 700px) {
+    .main::before {
+        background-size: 38px 38px;
+        opacity: .55;
+    }
+
+    body::before {
+        filter: blur(45px);
+    }
+
+    .main::after {
+        width: 250px;
+        height: 250px;
+    }
+
+    .stat-card:hover {
+        transform: translateY(-4px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: .001ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .001ms !important;
+    }
+}
+
+
+/* =========================================================
+   NEXUS HOLOGRAPHIC CORE 2.0
+   Interactive depth / cursor light / holographic surfaces
+   ========================================================= */
+
+:root {
+    --nx-cursor-x: 50%;
+    --nx-cursor-y: 50%;
+    --nx-angle-x: 0deg;
+    --nx-angle-y: 0deg;
+}
+
+/* ---------------------------------------------------------
+   GLOBAL CURSOR LIGHT
+   --------------------------------------------------------- */
+
+body {
+    --mouse-x: 50%;
+    --mouse-y: 50%;
+}
+
+body::after {
+    content: "";
+    position: fixed;
+
+    left: var(--mouse-x);
+    top: var(--mouse-y);
+
+    width: 420px;
+    height: 420px;
+
+    transform: translate(-50%, -50%);
+
+    pointer-events: none;
+    z-index: -1;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(95,255,240,.055) 0%,
+            rgba(95,255,240,.025) 28%,
+            transparent 70%
+        );
+
+    filter: blur(20px);
+
+    transition:
+        left .18s ease-out,
+        top .18s ease-out;
+}
+
+/* ---------------------------------------------------------
+   HOLOGRAPHIC PANELS
+   --------------------------------------------------------- */
+
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    --card-x: 50%;
+    --card-y: 50%;
+
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+
+    transform-style: preserve-3d;
+
+    background:
+        radial-gradient(
+            circle at var(--card-x) var(--card-y),
+            rgba(95,255,240,.075),
+            transparent 35%
+        ),
+        var(--panel);
+
+    transition:
+        transform .18s cubic-bezier(.2,.8,.2,1),
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+/* holographic reflection */
+
+.stat-card::after,
+.alert-card::after,
+.section::after,
+.status-card::after {
+    content: "";
+
+    position: absolute;
+
+    inset: -80%;
+
+    pointer-events: none;
+
+    background:
+        linear-gradient(
+            115deg,
+            transparent 35%,
+            rgba(255,255,255,.025) 43%,
+            rgba(95,255,240,.055) 48%,
+            rgba(155,124,255,.045) 52%,
+            transparent 60%
+        );
+
+    transform:
+        translateX(-35%)
+        rotate(12deg);
+
+    animation:
+        nxHoloSweep 9s ease-in-out infinite;
+
+    mix-blend-mode: screen;
+}
+
+@keyframes nxHoloSweep {
+
+    0% {
+        transform:
+            translateX(-40%)
+            rotate(12deg);
+    }
+
+    50% {
+        transform:
+            translateX(20%)
+            rotate(12deg);
+    }
+
+    100% {
+        transform:
+            translateX(80%)
+            rotate(12deg);
+    }
+}
+
+/* ---------------------------------------------------------
+   3D CARD LAYER
+   --------------------------------------------------------- */
+
+.stat-card > *,
+.alert-card > *,
+.section > *,
+.status-card > * {
+    position: relative;
+    z-index: 2;
+}
+
+.stat-card:hover,
+.alert-card:hover,
+.section:hover,
+.status-card:hover {
+    box-shadow:
+        0 30px 90px rgba(0,0,0,.38),
+        0 0 50px rgba(95,255,240,.055),
+        inset 0 1px 0 rgba(255,255,255,.065);
+}
+
+/* ---------------------------------------------------------
+   FLOATING HOLOGRAM MARK
+   --------------------------------------------------------- */
+
+.stat-card {
+    isolation: isolate;
+}
+
+.stat-card .icon,
+.stat-card .stat-icon {
+    transform:
+        translateZ(24px);
+
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        filter .35s ease;
+}
+
+.stat-card:hover .icon,
+.stat-card:hover .stat-icon {
+    transform:
+        translateZ(42px)
+        scale(1.06);
+
+    filter:
+        drop-shadow(
+            0 0 12px rgba(95,255,240,.25)
+        );
+}
+
+/* ---------------------------------------------------------
+   FLOATING GEOMETRIC PARTICLES
+   --------------------------------------------------------- */
+
+.stat-card .icon::before,
+.stat-card .stat-icon::before {
+    content: "";
+
+    position: absolute;
+
+    width: 7px;
+    height: 7px;
+
+    top: -18px;
+    right: -20px;
+
+    border-radius: 50%;
+
+    background: var(--nx-cyan);
+
+    box-shadow:
+        0 0 8px rgba(95,255,240,.7),
+        0 0 22px rgba(95,255,240,.25);
+
+    animation:
+        nxParticleFloat 4s ease-in-out infinite;
+}
+
+@keyframes nxParticleFloat {
+
+    0% {
+        transform:
+            translate3d(0,0,0)
+            scale(.7);
+
+        opacity: .25;
+    }
+
+    50% {
+        transform:
+            translate3d(8px,-12px,12px)
+            scale(1);
+
+        opacity: .95;
+    }
+
+    100% {
+        transform:
+            translate3d(0,0,0)
+            scale(.7);
+
+        opacity: .25;
+    }
+}
+
+/* ---------------------------------------------------------
+   NAV HOLOGRAPHIC FEEDBACK
+   --------------------------------------------------------- */
+
+.nav a {
+    transform-style: preserve-3d;
+}
+
+.nav a:hover {
+    transform:
+        translateX(-5px)
+        translateZ(8px);
+}
+
+.nav a img,
+.nav a svg {
+    transition:
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        filter .35s ease;
+}
+
+.nav a:hover img,
+.nav a:hover svg {
+    transform:
+        translateZ(12px)
+        rotate(-4deg)
+        scale(1.08);
+
+    filter:
+        drop-shadow(
+            0 0 8px rgba(95,255,240,.28)
+        );
+}
+
+/* ---------------------------------------------------------
+   TOPBAR HOLOGRAPHIC EDGE
+   --------------------------------------------------------- */
+
+.topbar {
+    --top-x: 50%;
+    --top-y: 50%;
+}
+
+.topbar::before {
+    content: "";
+
+    position: absolute;
+
+    left: var(--top-x);
+    top: var(--top-y);
+
+    width: 300px;
+    height: 120px;
+
+    transform:
+        translate(-50%, -50%);
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            ellipse,
+            rgba(95,255,240,.055),
+            transparent 70%
+        );
+
+    filter: blur(18px);
+
+    pointer-events: none;
+
+    transition:
+        left .2s ease,
+        top .2s ease;
+}
+
+/* ---------------------------------------------------------
+   HOLOGRAPHIC BORDER
+   --------------------------------------------------------- */
+
+.stat-card,
+.alert-card,
+.section,
+.status-card,
+.topbar {
+    border-color:
+        rgba(95,255,240,.12);
+}
+
+.stat-card:hover,
+.alert-card:hover,
+.section:hover,
+.status-card:hover {
+    border-color:
+        rgba(95,255,240,.26);
+}
+
+/* ---------------------------------------------------------
+   CINEMATIC ENTRY
+   --------------------------------------------------------- */
+
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    animation:
+        nxCardEntry .75s cubic-bezier(.2,.8,.2,1) both;
+}
+
+@keyframes nxCardEntry {
+
+    from {
+        opacity: 0;
+        transform:
+            translateY(18px)
+            scale(.985);
+        filter: blur(5px);
+    }
+
+    to {
+        opacity: 1;
+        transform:
+            translateY(0)
+            scale(1);
+        filter: blur(0);
+    }
+}
+
+/* sequential reveal */
+
+.stat-card:nth-child(1) {
+    animation-delay: .04s;
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: .10s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: .16s;
+}
+
+.stat-card:nth-child(4) {
+    animation-delay: .22s;
+}
+
+.alert-card:nth-child(1) {
+    animation-delay: .12s;
+}
+
+.alert-card:nth-child(2) {
+    animation-delay: .18s;
+}
+
+/* ---------------------------------------------------------
+   MOBILE
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+
+    body::after {
+        width: 260px;
+        height: 260px;
+    }
+
+    .stat-card:hover,
+    .alert-card:hover,
+    .section:hover,
+    .status-card:hover {
+        transform:
+            translateY(-3px)
+            scale(1.005);
+    }
+
+    .stat-card .icon,
+    .stat-card .stat-icon {
+        transform: none;
+    }
+}
+
+/* ---------------------------------------------------------
+   LOW POWER DEVICES
+   --------------------------------------------------------- */
+
+@media (max-width: 500px) {
+
+    body::after {
+        filter: blur(12px);
+    }
+
+    .stat-card::after,
+    .alert-card::after,
+    .section::after,
+    .status-card::after {
+        animation-duration: 14s;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+
+/* =========================================================
+   NEXUS PERFORMANCE PATCH 1.0
+   Lightweight rendering for low-end devices
+   ========================================================= */
+
+/* کاهش هزینه GPU */
+.topbar,
+.sidebar,
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    backdrop-filter: blur(9px) saturate(110%);
+    -webkit-backdrop-filter: blur(9px) saturate(110%);
+}
+
+/* انیمیشن‌های محیطی آرام‌تر */
+body::before {
+    animation-duration: 36s !important;
+    filter: blur(45px) !important;
+}
+
+.main::before {
+    animation-duration: 50s !important;
+}
+
+.main::after {
+    animation-duration: 28s !important;
+    filter: blur(10px) !important;
+}
+
+.sidebar::before {
+    animation-duration: 18s !important;
+}
+
+/* جلوگیری از مصرف بیش از حد GPU */
+.stat-card,
+.alert-card,
+.section,
+.status-card {
+    will-change: auto;
+}
+
+/* موبایل: افکت‌های سنگین خاموش */
+@media (max-width: 700px), (pointer: coarse) {
+
+    body::before {
+        animation: none !important;
+        filter: blur(32px) !important;
+    }
+
+    .main::before {
+        animation: none !important;
+    }
+
+    .main::after {
+        animation: none !important;
+        display: none;
+    }
+
+    .sidebar::before {
+        animation: none !important;
+    }
+
+    .stat-card::after,
+    .alert-card::after,
+    .section::after,
+    .status-card::after {
+        animation: none !important;
+        opacity: .18;
+    }
+
+    .stat-card:hover,
+    .alert-card:hover,
+    .section:hover,
+    .status-card:hover {
+        transform: translateY(-2px) !important;
+    }
+}
+
+/* اگر کاربر کاهش حرکت خواسته باشد */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+
+/* =========================================================
+   NEXUS MOBILE FIT 1.0
+   ========================================================= */
+
+html {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    margin: 0;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+body *,
+body *::before,
+body *::after {
+    box-sizing: border-box;
+}
+
+@media (max-width: 850px) {
+
+    html,
+    body {
+        width: 100%;
+        min-width: 0;
+        max-width: 100vw;
+        overflow-x: hidden;
+    }
+
+    .layout {
+        display: block !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+    }
+
+    .main {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        padding:
+            76px 14px 24px !important;
+        overflow-x: hidden;
+    }
+
+    .topbar {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        margin: 0 0 14px !important;
+        padding: 14px !important;
+    }
+
+    .topbar > * {
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .content-grid {
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    .stats,
+    .stats-grid,
+    .stat-grid {
+        width: 100% !important;
+        min-width: 0 !important;
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .stat-card,
+    .alert-card,
+    .section,
+    .status-card {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    .stat-card *,
+    .alert-card *,
+    .section *,
+    .status-card * {
+        max-width: 100%;
+    }
+
+    .sidebar {
+        width: min(86vw, 330px) !important;
+        max-width: 330px !important;
+    }
+
+    .menu-toggle {
+        position: fixed !important;
+        top: 14px !important;
+        right: 14px !important;
+        z-index: 10050 !important;
+    }
+
+    .menu-overlay {
+        z-index: 10000 !important;
+    }
+
+    .sidebar {
+        z-index: 10020 !important;
+    }
+
+    img,
+    svg,
+    video,
+    canvas {
+        max-width: 100%;
+    }
+}
+
+/* گوشی‌های باریک */
+
+@media (max-width: 520px) {
+
+    .main {
+        padding:
+            72px 10px 20px !important;
+    }
+
+    .topbar {
+        padding: 12px !important;
+        border-radius: 16px !important;
+    }
+
+    .stats,
+    .stats-grid,
+    .stat-grid {
+        grid-template-columns:
+            minmax(0, 1fr) !important;
+        gap: 10px !important;
+    }
+
+    .stat-card,
+    .alert-card,
+    .section,
+    .status-card {
+        border-radius: 16px !important;
+    }
+
+    .stat-card {
+        padding: 14px !important;
+    }
+
+    .topbar h1 {
+        font-size: 18px !important;
+        line-height: 1.5 !important;
+    }
+
+    .topbar p {
+        font-size: 12px !important;
+        line-height: 1.7 !important;
+    }
+
+    .menu-toggle {
+        width: 44px !important;
+        height: 44px !important;
+        top: 10px !important;
+        right: 10px !important;
+    }
+}
+
+/* گوشی خیلی کوچک */
+
+@media (max-width: 380px) {
+
+    .main {
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .topbar {
+        padding: 10px !important;
+    }
+
+    .stat-card {
+        padding: 12px !important;
+    }
+}
+
+</style>
+
+<!-- NEXUS AURORA 3.0 -->
+<style>
+:root{
+  --bg:#f4fafc;
+  --bg2:#eef7fb;
+  --surface:rgba(255,255,255,.82);
+  --surface-solid:#ffffff;
+  --line:rgba(8,126,164,.13);
+  --line-strong:rgba(8,126,164,.28);
+
+  --primary:#087ea4;
+  --primary-2:#11a8bd;
+  --purple:#7c5cfc;
+
+  --text:#102a35;
+  --muted:#66818b;
+
+  --success:#16a878;
+  --warning:#f59e0b;
+  --danger:#ef4444;
+
+  --shadow:
+    0 18px 45px rgba(23,91,112,.10),
+    0 3px 12px rgba(23,91,112,.06);
+}
+
+/* صفحه */
+html,
+body{
+  background:
+    radial-gradient(circle at 8% 8%,rgba(17,168,189,.13),transparent 28%),
+    radial-gradient(circle at 92% 12%,rgba(124,92,252,.10),transparent 25%),
+    linear-gradient(135deg,var(--bg),var(--bg2));
+  color:var(--text);
+}
+
+/* نور Aurora */
+body::before{
+  content:"";
+  position:fixed;
+  width:420px;
+  height:420px;
+  left:-180px;
+  top:-170px;
+  border-radius:50%;
+  background:radial-gradient(
+    circle,
+    rgba(17,168,189,.18),
+    rgba(17,168,189,.06) 38%,
+    transparent 70%
+  );
+  pointer-events:none;
+  z-index:0;
+  animation:auroraFloat 12s ease-in-out infinite alternate;
+}
+
+body::after{
+  content:"";
+  position:fixed;
+  width:360px;
+  height:360px;
+  right:-160px;
+  bottom:-160px;
+  border-radius:50%;
+  background:radial-gradient(
+    circle,
+    rgba(124,92,252,.14),
+    rgba(124,92,252,.04) 42%,
+    transparent 70%
+  );
+  pointer-events:none;
+  z-index:0;
+  animation:auroraFloat2 15s ease-in-out infinite alternate;
+}
+
+@keyframes auroraFloat{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(80px,45px,0)}
+}
+
+@keyframes auroraFloat2{
+  from{transform:translate3d(0,0,0)}
+  to{transform:translate3d(-70px,-40px,0)}
+}
+
+/* محتوای اصلی */
+.main,
+.topbar,
+.content,
+.content-grid,
+.stats,
+.card,
+.stat-card{
+  position:relative;
+  z-index:1;
+}
+
+/* هدر */
+.topbar{
+  background:rgba(255,255,255,.78)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:var(--shadow)!important;
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  color:var(--text)!important;
+}
+
+.topbar h1,
+.topbar h2,
+.topbar h3{
+  color:var(--text)!important;
+}
+
+.topbar p,
+.topbar span{
+  color:var(--muted);
+}
+
+/* کارت‌های آماری */
+.stat-card{
+  background:
+    linear-gradient(
+      135deg,
+      rgba(255,255,255,.94),
+      rgba(247,252,254,.78)
+    )!important;
+
+  border:1px solid var(--line)!important;
+  box-shadow:var(--shadow)!important;
+  color:var(--text)!important;
+
+  transition:
+    transform .22s ease,
+    box-shadow .22s ease,
+    border-color .22s ease;
+}
+
+.stat-card:hover{
+  transform:translateY(-5px);
+  border-color:var(--line-strong)!important;
+  box-shadow:
+    0 24px 55px rgba(23,91,112,.14),
+    0 5px 18px rgba(23,91,112,.07)!important;
+}
+
+.stat-card h3,
+.stat-card strong,
+.stat-card b{
+  color:var(--text)!important;
+}
+
+.stat-card p,
+.stat-card small{
+  color:var(--muted)!important;
+}
+
+/* کارت‌های اصلی */
+.card{
+  background:rgba(255,255,255,.82)!important;
+  border:1px solid var(--line)!important;
+  box-shadow:var(--shadow)!important;
+  color:var(--text)!important;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+}
+
+.card h2,
+.card h3,
+.card h4,
+.card strong{
+  color:var(--text)!important;
+}
+
+.card p,
+.card small,
+.card .muted{
+  color:var(--muted)!important;
+}
+
+/* لینک‌های منو */
+.sidebar{
+  background:
+    linear-gradient(
+      180deg,
+      rgba(255,255,255,.96),
+      rgba(242,249,252,.96)
+    )!important;
+
+  border-left:1px solid var(--line)!important;
+  border-right:1px solid var(--line)!important;
+  box-shadow:
+    10px 0 35px rgba(23,91,112,.06)!important;
+}
+
+.sidebar *{
+  color:var(--text);
+}
+
+.sidebar a{
+  transition:
+    background .18s ease,
+    color .18s ease,
+    transform .18s ease;
+}
+
+.sidebar a:hover{
+  background:linear-gradient(
+    90deg,
+    rgba(17,168,189,.10),
+    rgba(124,92,252,.06)
+  )!important;
+  color:var(--primary)!important;
+  transform:translateX(-3px);
+}
+
+.sidebar a.active,
+.sidebar a[aria-current="page"]{
+  background:
+    linear-gradient(
+      90deg,
+      rgba(17,168,189,.16),
+      rgba(124,92,252,.08)
+    )!important;
+  color:var(--primary)!important;
+}
+
+/* برند */
+.sidebar .brand,
+.sidebar .logo{
+  color:var(--text)!important;
+}
+
+.sidebar .brand span,
+.sidebar .logo span{
+  color:var(--primary)!important;
+}
+
+/* دکمه منو */
+.menu-toggle{
+  background:rgba(255,255,255,.92)!important;
+  color:var(--primary)!important;
+  border:1px solid var(--line-strong)!important;
+  box-shadow:0 10px 25px rgba(23,91,112,.12)!important;
+}
+
+.menu-toggle:hover{
+  background:#fff!important;
+  box-shadow:
+    0 14px 32px rgba(23,91,112,.16)!important;
+}
+
+/* دکمه‌ها */
+button,
+.btn,
+input[type="submit"]{
+  transition:
+    transform .18s ease,
+    box-shadow .18s ease,
+    filter .18s ease;
+}
+
+button:hover,
+.btn:hover,
+input[type="submit"]:hover{
+  filter:brightness(1.03);
+}
+
+button:active,
+.btn:active,
+input[type="submit"]:active{
+  transform:translateY(1px);
+}
+
+/* وضعیت‌ها */
+.status-success,
+.success{
+  color:var(--success)!important;
+}
+
+.status-warning,
+.warning{
+  color:var(--warning)!important;
+}
+
+.status-danger,
+.danger{
+  color:var(--danger)!important;
+}
+
+/* جدول */
+table{
+  color:var(--text)!important;
+}
+
+thead{
+  background:rgba(8,126,164,.055)!important;
+}
+
+th{
+  color:var(--primary)!important;
+}
+
+td{
+  border-color:var(--line)!important;
+}
+
+tbody tr{
+  transition:background .16s ease;
+}
+
+tbody tr:hover{
+  background:rgba(17,168,189,.045)!important;
+}
+
+/* ورودی‌ها */
+input,
+select,
+textarea{
+  background:rgba(255,255,255,.9)!important;
+  color:var(--text)!important;
+  border:1px solid var(--line-strong)!important;
+}
+
+input::placeholder,
+textarea::placeholder{
+  color:#91a9b0!important;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+  border-color:rgba(8,126,164,.48)!important;
+  box-shadow:
+    0 0 0 3px rgba(17,168,189,.10)!important;
+  outline:none;
+}
+
+/* موبایل */
+@media(max-width:850px){
+  body{
+    background:
+      radial-gradient(circle at 50% 0%,rgba(17,168,189,.11),transparent 35%),
+      linear-gradient(150deg,var(--bg),var(--bg2));
+  }
+
+  body::before,
+  body::after{
+    animation:none;
+    opacity:.55;
+  }
+
+  .card{
+    backdrop-filter:none;
+    -webkit-backdrop-filter:none;
+  }
+
+  .topbar{
+    backdrop-filter:blur(7px);
+    -webkit-backdrop-filter:blur(7px);
+  }
+}
+
+/* گوشی ضعیف */
+@media(max-width:520px),(pointer:coarse){
+  body::before,
+  body::after{
+    opacity:.35;
+  }
+
+  .stat-card:hover,
+  .card:hover{
+    transform:none!important;
+  }
+}
+
+/* کاهش حرکت */
+@media(prefers-reduced-motion:reduce){
+  *,
+  *::before,
+  *::after{
+    animation:none!important;
+    transition:none!important;
+  }
+}
+</style>
+
+</head>
+
+<body>
+
+<!-- Professional responsive menu controls -->
+<button
+    type="button"
+    class="menu-toggle"
+    id="menuToggle"
+    aria-label="باز کردن منو"
+    aria-expanded="false"
+    aria-controls="mainSidebar"
+>
+    <span class="menu-toggle-lines">
+        <span></span>
+        <span></span>
+        <span></span>
+    </span>
+</button>
+
+<div class="menu-overlay" id="menuOverlay"></div>
+
+
+<div class="layout">
+
+    <aside class="sidebar" id="mainSidebar">
+
+        <button
+            type="button"
+            class="sidebar-collapse"
+            id="sidebarCollapse"
+            aria-label="جمع کردن منو"
+            title="جمع کردن منو"
+        >
+            ‹
+        </button>
+
+        <div class="brand">
+            <div class="brand-title">کتابخانه ۱۳ آبان</div>
+            <div class="brand-subtitle">مرکز کنترل و مدیریت سامانه</div>
+        </div>
+
+        <div class="nav-title">مدیریت</div>
+
+        <nav class="nav">
+
+            <a href="{{ url_for('admin.dashboard') }}" class="active">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/dashboard.svg') }}" alt="">
+                </span>
+                <span>داشبورد</span>
+            </a>
+
+            <a href="{{ url_for('admin.schools') }}">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/schools.svg') }}" alt="">
+                </span>
+                <span>مدارس</span>
+            </a>
+
+            <a href="{{ url_for('admin.students') }}">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/students.svg') }}" alt="">
+                </span>
+                <span>اعضای کتابخانه</span>
+            </a>
+
+            <a href="{{ url_for('admin.books') }}">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/books.svg') }}" alt="">
+                </span>
+                <span>کتاب‌ها</span>
+            </a>
+
+            <a href="{{ url_for('admin.loans') }}">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/loans.svg') }}" alt="">
+                </span>
+                <span>امانت‌ها</span>
+            </a>
+
+            <a href="{{ url_for('admin.books_import') }}">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/excel.svg') }}" alt="">
+                </span>
+                <span>ورود کتاب از Excel</span>
+            </a>
+
+        </nav>
+
+        <div class="nav-title">حساب</div>
+
+        <nav class="nav">
+            <a href="{{ url_for('auth.logout') }}" class="logout">
+                <span class="nav-icon">
+                    <img src="{{ url_for('static', filename='images/logout.svg') }}" alt="">
+                </span>
+                <span>خروج از حساب</span>
+            </a>
+        </nav>
+
+    </aside>
+
+
+    <main class="main">
+
+        <header class="topbar">
+
+            <div class="welcome">
+                <h1>داشبورد مدیریت</h1>
+                <p>
+                    نمای زنده وضعیت سامانه کتابخانه ۱۳ آبان
+                </p>
+            </div>
+
+            <div class="admin-badge">
+                <img
+                    src="{{ url_for('static', filename='images/admin.svg') }}"
+                    alt=""
+                >
+                <span>
+                    مدیر:
+                    {{ session.get("admin_username", "مدیر") }}
+                </span>
+            </div>
+
+        </header>
+
+
+        <section class="stats">
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">مدارس ثبت‌شده</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/schools.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ school_count }}</div>
+                <div class="stat-description">مدارس موجود در سامانه</div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">اعضای کتابخانه</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/students.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ student_count }}</div>
+                <div class="stat-description">اعضای ثبت‌شده</div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">مدیران سامانه</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/admins.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ admin_count }}</div>
+                <div class="stat-description">حساب‌های مدیریتی</div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">امانت‌های فعال</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/loans.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ active_loan_count }}</div>
+                <div class="stat-description">امانت‌های باز</div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">دیرکرد</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/loans.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ overdue_loan_count }}</div>
+                <div class="stat-description">امانت‌های فعال با موعد گذشته</div>
+            </div>
+
+
+            <div class="stat">
+                <div class="stat-head">
+                    <span class="stat-label">امانت‌های برگشتی</span>
+                    <span class="stat-icon">
+                        <img src="{{ url_for('static', filename='images/loans.svg') }}" alt="">
+                    </span>
+                </div>
+
+                <div class="stat-value">{{ returned_loan_count }}</div>
+                <div class="stat-description">امانت‌های ثبت‌شده به‌عنوان برگشتی</div>
+            </div>
+
+        </section>
+
+
+        <section class="alerts">
+
+            <div class="alert {% if overdue_loan_count > 0 %}danger{% endif %}">
+                <div>
+                    <div class="alert-title">وضعیت دیرکرد</div>
+                    <div class="alert-text">
+                        {% if overdue_loan_count > 0 %}
+                            {{ overdue_loan_count }} امانت نیاز به پیگیری دارد.
+                        {% else %}
+                            هیچ امانت فعالِ دارای دیرکرد ثبت نشده است.
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="alert-number">
+                    {{ overdue_loan_count }}
+                </div>
+            </div>
+
+
+            <div class="alert">
+                <div>
+                    <div class="alert-title">وضعیت امانت‌ها</div>
+                    <div class="alert-text">
+                        در حال حاضر {{ active_loan_count }} امانت فعال است.
+                    </div>
+                </div>
+
+                <div class="alert-number">
+                    {{ active_loan_count }}
+                </div>
+            </div>
+
+        </section>
+
+
+        <section class="content-grid">
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        <div class="panel-title">آخرین فعالیت‌های امانت</div>
+                        <div class="panel-subtitle">
+                            آخرین رکوردهای ثبت‌شده در سامانه
+                        </div>
+                    </div>
+
+                    <a class="panel-link"
+                       href="{{ url_for('admin.loans') }}">
+                        مشاهده همه
+                    </a>
+                </div>
+
+
+                <div class="loan-list">
+
+                    {% if recent_loans %}
+
+                        {% for loan in recent_loans %}
+
+                            <div class="loan-item">
+
+                                <div class="loan-main">
+                                    <div class="loan-id">
+                                        امانت شماره {{ loan.id }}
+                                    </div>
+
+                                    <div class="loan-meta">
+                                        {% if loan.student %}
+                                            عضو: {{ loan.student.first_name }}
+                                            {{ loan.student.last_name }}
+                                        {% else %}
+                                            عضو نامشخص
+                                        {% endif %}
+
+                                        ·
+
+                                        {% if loan.book_id %}
+                                            شناسه کتاب: {{ loan.book_id }}
+                                        {% else %}
+                                            کتاب هنوز به شناسه متصل نیست
+                                        {% endif %}
+                                    </div>
+                                </div>
+
+                                {% if loan.status == "active" and loan.due_at < now() %}
+                                    <span class="status overdue">
+                                        دیرکرد
+                                    </span>
+                                {% elif loan.status == "returned" %}
+                                    <span class="status">
+                                        برگشتی
+                                    </span>
+                                {% else %}
+                                    <span class="status">
+                                        فعال
+                                    </span>
+                                {% endif %}
+
+                            </div>
+
+                        {% endfor %}
+
+                    {% else %}
+
+                        <div class="empty">
+                            هنوز فعالیت امانی ثبت نشده است.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-header">
+                    <div>
+                        
+                        <div class="panel-subtitle">
+                            عملیات پرکاربرد مدیریت سامانه
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <section class="system">
+
+            <span class="online"></span>
+
+            <div>
+                <div class="system-title">سامانه فعال است</div>
+                <div class="system-text">
+                    سرویس مدیریت کتابخانه در وضعیت عملیاتی قرار دارد.
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<script>
+(() => {
+    const layout = document.querySelector(".layout");
+    const toggle = document.getElementById("menuToggle");
+    const overlay = document.getElementById("menuOverlay");
+    const collapse = document.getElementById("sidebarCollapse");
+    const sidebar = document.getElementById("mainSidebar");
+
+    if (!layout || !toggle || !sidebar) return;
+
+    const mobileQuery = window.matchMedia("(max-width: 850px)");
+    const storageKey = "ketabmadrese_sidebar_collapsed";
+
+    function isMobile() {
+        return mobileQuery.matches;
+    }
+
+    function setMobileMenu(open) {
+        if (!isMobile()) return;
+
+        layout.classList.toggle("menu-open", open);
+        toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute(
+            "aria-label",
+            open ? "بستن منو" : "باز کردن منو"
+        );
+
+        document.body.style.overflow = open ? "hidden" : "";
+    }
+
+    function setDesktopCollapsed(collapsed) {
+        if (isMobile()) return;
+
+        layout.classList.toggle("desktop-collapsed", collapsed);
+
+        try {
+            localStorage.setItem(storageKey, collapsed ? "1" : "0");
+        } catch (_) {}
+    }
+
+    toggle.addEventListener("click", () => {
+        setMobileMenu(!layout.classList.contains("menu-open"));
+    });
+
+    overlay?.addEventListener("click", () => {
+        setMobileMenu(false);
+    });
+
+    collapse?.addEventListener("click", () => {
+        setDesktopCollapsed(
+            !layout.classList.contains("desktop-collapsed")
+        );
+    });
+
+    document.addEventListener("keydown", (event) => {
+        if (event.key === "Escape") {
+            if (isMobile()) {
+                setMobileMenu(false);
+            }
+        }
+    });
+
+    sidebar.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+            if (isMobile()) {
+                setMobileMenu(false);
+            }
+        });
+    });
+
+    function syncLayout() {
+        if (isMobile()) {
+            layout.classList.remove("desktop-collapsed");
+            document.body.style.overflow = "";
+        } else {
+            layout.classList.remove("menu-open");
+
+            let collapsed = false;
+
+            try {
+                collapsed = localStorage.getItem(storageKey) === "1";
+            } catch (_) {}
+
+            layout.classList.toggle("desktop-collapsed", collapsed);
+            document.body.style.overflow = "";
+        }
+    }
+
+    if (mobileQuery.addEventListener) {
+        mobileQuery.addEventListener("change", syncLayout);
+    } else {
+        mobileQuery.addListener(syncLayout);
+    }
+
+    syncLayout();
+})();
+</script>
+
+
+
+
+
+<script>
+/* =========================================================
+   NEXUS LIGHT INTERACTION ENGINE
+   Performance-safe cursor effects
+   ========================================================= */
+
+(() => {
+
+    /*
+     * روی موبایل اصلاً اجرا نمی‌شود.
+     * این مهم‌ترین بخش Performance Fix است.
+     */
+
+    if (
+        window.matchMedia("(pointer: coarse)").matches ||
+        window.innerWidth <= 700
+    ) {
+        return;
+    }
+
+    const cards = Array.from(
+        document.querySelectorAll(
+            ".stat-card, .alert-card, .section, .status-card"
+        )
+    );
+
+    if (!cards.length) return;
+
+    let activeCard = null;
+    let mouseX = 0;
+    let mouseY = 0;
+    let frame = 0;
+
+    function update() {
+
+        frame = 0;
+
+        if (!activeCard) return;
+
+        const rect =
+            activeCard.getBoundingClientRect();
+
+        const x =
+            (mouseX - rect.left) / rect.width;
+
+        const y =
+            (mouseY - rect.top) / rect.height;
+
+        const px =
+            Math.max(0, Math.min(1, x));
+
+        const py =
+            Math.max(0, Math.min(1, y));
+
+        /*
+         * بسیار ظریف؛
+         * هدف زیبایی است، نه حرکت شدید.
+         */
+
+        const rotateX =
+            (0.5 - py) * 3;
+
+        const rotateY =
+            (px - 0.5) * 3;
+
+        activeCard.style.transform =
+            `perspective(1000px)
+             rotateX(${rotateX}deg)
+             rotateY(${rotateY}deg)
+             translateY(-4px)`;
+
+        activeCard.style.setProperty(
+            "--card-x",
+            `${px * 100}%`
+        );
+
+        activeCard.style.setProperty(
+            "--card-y",
+            `${py * 100}%`
+        );
+    }
+
+    document.addEventListener(
+        "pointermove",
+        event => {
+
+            const target =
+                event.target.closest(
+                    ".stat-card, .alert-card, .section, .status-card"
+                );
+
+            activeCard = target || null;
+
+            if (!activeCard) return;
+
+            mouseX = event.clientX;
+            mouseY = event.clientY;
+
+            if (!frame) {
+                frame =
+                    requestAnimationFrame(update);
+            }
+
+        },
+        { passive: true }
+    );
+
+    cards.forEach(card => {
+
+        card.addEventListener(
+            "pointerleave",
+            () => {
+
+                if (activeCard === card) {
+                    activeCard = null;
+                }
+
+                card.style.transform = "";
+                card.style.setProperty(
+                    "--card-x",
+                    "50%"
+                );
+
+                card.style.setProperty(
+                    "--card-y",
+                    "50%"
+                );
+            }
+        );
+
+    });
+
+})();
+</script>
+
+</body>
+</html>
+
+
+
+<!-- NEXUS AURORA 4.0 -->
+<style>
+/* =========================================================
+   NEXUS AURORA 4.0
+   FINAL VISUAL OVERRIDE
+   ========================================================= */
+
+:root{
+    --bg:#f3f9fc !important;
+    --bg-soft:#eaf6fa !important;
+
+    --panel:#ffffff !important;
+    --panel-strong:#ffffff !important;
+
+    --border:rgba(8,126,164,.14) !important;
+    --border-strong:rgba(8,126,164,.28) !important;
+
+    --accent:#087ea4 !important;
+    --accent-soft:#159bb5 !important;
+
+    --text:#102a35 !important;
+    --muted:#64808a !important;
+
+    --danger:#e05262 !important;
+    --danger-soft:rgba(224,82,98,.09) !important;
+
+    --success:#139b70 !important;
+}
+
+/* ---------- BASE ---------- */
+
+html{
+    background:#f3f9fc !important;
+}
+
+body{
+    background:
+        radial-gradient(
+            circle at 8% 5%,
+            rgba(17,168,189,.13),
+            transparent 27%
+        ),
+        radial-gradient(
+            circle at 92% 12%,
+            rgba(124,92,252,.10),
+            transparent 25%
+        ),
+        linear-gradient(
+            135deg,
+            #f7fcfe 0%,
+            #eef8fb 50%,
+            #f6f3ff 100%
+        ) !important;
+
+    color:#102a35 !important;
+}
+
+/* ---------- SIDEBAR ---------- */
+
+.sidebar{
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.97),
+            rgba(244,250,252,.97)
+        ) !important;
+
+    color:#102a35 !important;
+
+    border-color:rgba(8,126,164,.13) !important;
+
+    box-shadow:
+        12px 0 40px rgba(35,94,112,.08) !important;
+}
+
+.sidebar,
+.sidebar *,
+.sidebar a{
+    color:#102a35 !important;
+}
+
+.sidebar a{
+    background:transparent !important;
+}
+
+.sidebar a:hover{
+    color:#087ea4 !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(17,168,189,.12),
+            rgba(124,92,252,.055)
+        ) !important;
+}
+
+.sidebar a.active,
+.sidebar a[aria-current="page"]{
+    color:#087ea4 !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(17,168,189,.16),
+            rgba(124,92,252,.08)
+        ) !important;
+
+    box-shadow:
+        inset -3px 0 #087ea4 !important;
+}
+
+.sidebar img{
+    filter:
+        saturate(.9)
+        brightness(.82)
+        !important;
+}
+
+.sidebar .brand,
+.sidebar .logo{
+    color:#102a35 !important;
+}
+
+.sidebar .brand span,
+.sidebar .logo span{
+    color:#087ea4 !important;
+}
+
+/* ---------- COLLAPSE BUTTON ---------- */
+
+.sidebar-collapse{
+    color:#087ea4 !important;
+
+    background:
+        rgba(8,126,164,.055) !important;
+
+    border-color:
+        rgba(8,126,164,.16) !important;
+}
+
+.sidebar-collapse:hover{
+    color:#7c5cfc !important;
+
+    background:
+        rgba(124,92,252,.08) !important;
+
+    border-color:
+        rgba(124,92,252,.22) !important;
+}
+
+/* ---------- TOPBAR ---------- */
+
+.topbar{
+    background:
+        rgba(255,255,255,.88) !important;
+
+    color:#102a35 !important;
+
+    border-color:
+        rgba(8,126,164,.13) !important;
+
+    box-shadow:
+        0 15px 40px rgba(35,94,112,.08) !important;
+
+    backdrop-filter:blur(10px) !important;
+    -webkit-backdrop-filter:blur(10px) !important;
+}
+
+.topbar *{
+    color:#102a35 !important;
+}
+
+.topbar p,
+.topbar small{
+    color:#64808a !important;
+}
+
+.topbar .badge,
+.topbar .admin-badge{
+    color:#087ea4 !important;
+
+    background:
+        rgba(17,168,189,.09) !important;
+
+    border-color:
+        rgba(17,168,189,.18) !important;
+}
+
+/* ---------- MAIN STAT CARDS ---------- */
+
+.stat,
+.stat-card{
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.97),
+            rgba(248,252,254,.91)
+        ) !important;
+
+    color:#102a35 !important;
+
+    border-color:
+        rgba(8,126,164,.13) !important;
+
+    box-shadow:
+        0 15px 38px rgba(35,94,112,.075),
+        0 2px 8px rgba(35,94,112,.04) !important;
+}
+
+.stat *,
+.stat-card *{
+    color:#102a35 !important;
+}
+
+.stat-label,
+.stat-description{
+    color:#64808a !important;
+}
+
+.stat-value{
+    color:#087ea4 !important;
+}
+
+.stat-icon{
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17,168,189,.13),
+            rgba(124,92,252,.08)
+        ) !important;
+
+    border-color:
+        rgba(17,168,189,.15) !important;
+}
+
+.stat-icon img{
+    filter:
+        saturate(.9)
+        brightness(.78)
+        !important;
+}
+
+.stat:hover,
+.stat-card:hover{
+    border-color:
+        rgba(8,126,164,.30) !important;
+
+    box-shadow:
+        0 22px 48px rgba(35,94,112,.12) !important;
+}
+
+/* ---------- GENERAL CARDS ---------- */
+
+.status-card,
+.card,
+.panel{
+    background:
+        rgba(255,255,255,.90) !important;
+
+    color:#102a35 !important;
+
+    border-color:
+        rgba(8,126,164,.13) !important;
+
+    box-shadow:
+        0 15px 38px rgba(35,94,112,.075) !important;
+}
+
+.status-card *,
+.card *,
+.panel *{
+    color:#102a35 !important;
+}
+
+.status-card p,
+.card p,
+.panel p,
+.status-card small,
+.card small,
+.panel small{
+    color:#64808a !important;
+}
+
+/* ---------- ALERTS ---------- */
+
+.alert{
+    background:
+        rgba(255,255,255,.90) !important;
+
+    color:#102a35 !important;
+
+    border-color:
+        rgba(8,126,164,.12) !important;
+}
+
+.alert.overdue{
+    background:
+        rgba(224,82,98,.055) !important;
+
+    border-color:
+        rgba(224,82,98,.20) !important;
+}
+
+.alert *,
+.alert.overdue *{
+    color:#102a35 !important;
+}
+
+/* ---------- TABLE ---------- */
+
+table{
+    color:#102a35 !important;
+    background:transparent !important;
+}
+
+thead,
+thead tr{
+    background:
+        rgba(8,126,164,.055) !important;
+}
+
+th{
+    color:#087ea4 !important;
+}
+
+td{
+    color:#29434c !important;
+
+    border-color:
+        rgba(8,126,164,.10) !important;
+}
+
+tbody tr{
+    background:transparent !important;
+}
+
+tbody tr:hover{
+    background:
+        rgba(17,168,189,.045) !important;
+}
+
+/* ---------- STATUS ---------- */
+
+.status{
+    background:
+        rgba(19,155,112,.09) !important;
+
+    color:#13845f !important;
+
+    border-color:
+        rgba(19,155,112,.16) !important;
+}
+
+.status *{
+    color:#13845f !important;
+}
+
+.status.overdue{
+    background:
+        rgba(224,82,98,.09) !important;
+
+    color:#d64050 !important;
+
+    border-color:
+        rgba(224,82,98,.18) !important;
+}
+
+.status.overdue *{
+    color:#d64050 !important;
+}
+
+/* ---------- BUTTONS ---------- */
+
+button,
+.btn,
+input[type="submit"],
+input[type="button"]{
+    color:#ffffff !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            #087ea4,
+            #159bb5
+        ) !important;
+
+    border-color:
+        rgba(8,126,164,.20) !important;
+
+    box-shadow:
+        0 8px 20px rgba(8,126,164,.16) !important;
+}
+
+button:hover,
+.btn:hover,
+input[type="submit"]:hover,
+input[type="button"]:hover{
+    background:
+        linear-gradient(
+            135deg,
+            #087ea4,
+            #7c5cfc
+        ) !important;
+
+    box-shadow:
+        0 12px 28px rgba(8,126,164,.20) !important;
+}
+
+/* ---------- MENU BUTTON ---------- */
+
+.menu-toggle{
+    color:#087ea4 !important;
+
+    background:
+        rgba(255,255,255,.94) !important;
+
+    border-color:
+        rgba(8,126,164,.18) !important;
+
+    box-shadow:
+        0 10px 28px rgba(35,94,112,.12) !important;
+}
+
+.menu-toggle:hover{
+    color:#7c5cfc !important;
+
+    background:#ffffff !important;
+}
+
+/* ---------- FORMS ---------- */
+
+input,
+select,
+textarea{
+    color:#102a35 !important;
+
+    background:
+        rgba(255,255,255,.94) !important;
+
+    border-color:
+        rgba(8,126,164,.17) !important;
+
+    box-shadow:none !important;
+}
+
+input::placeholder,
+textarea::placeholder{
+    color:#8ba1a8 !important;
+}
+
+input:focus,
+select:focus,
+textarea:focus{
+    border-color:
+        rgba(8,126,164,.45) !important;
+
+    box-shadow:
+        0 0 0 3px rgba(17,168,189,.10) !important;
+}
+
+/* ---------- LINKS ---------- */
+
+a{
+    color:#087ea4;
+}
+
+a:hover{
+    color:#7c5cfc;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:850px){
+
+    .sidebar{
+        box-shadow:
+            8px 0 35px rgba(35,94,112,.13) !important;
+    }
+
+    .topbar{
+        background:
+            rgba(255,255,255,.94) !important;
+
+        backdrop-filter:blur(7px) !important;
+        -webkit-backdrop-filter:blur(7px) !important;
+    }
+
+    .stat,
+    .stat-card,
+    .status-card,
+    .card,
+    .panel{
+        backdrop-filter:none !important;
+        -webkit-backdrop-filter:none !important;
+    }
+}
+
+/* ---------- LOW-END DEVICE ---------- */
+
+@media(max-width:520px),(pointer:coarse){
+
+    body::before,
+    body::after{
+        animation:none !important;
+        opacity:.30 !important;
+    }
+
+    .stat:hover,
+    .stat-card:hover,
+    .card:hover{
+        transform:none !important;
+    }
+}
+</style>
+
+
+<!-- NEXUS AURORA ICONS 1.0 -->
+<style>
+/* =========================================================
+   AURORA ICON SYSTEM
+   ========================================================= */
+
+/* همه آیکون‌های منوی کناری */
+.sidebar img,
+.sidebar svg{
+    width:22px !important;
+    height:22px !important;
+
+    object-fit:contain;
+
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(39%)
+        sepia(36%)
+        saturate(1150%)
+        hue-rotate(151deg)
+        brightness(87%)
+        contrast(91%)
+        !important;
+
+    opacity:.92;
+
+    transition:
+        transform .2s ease,
+        filter .2s ease,
+        opacity .2s ease;
+}
+
+/* هاله خیلی ظریف دور آیکون */
+.sidebar a{
+    position:relative;
+}
+
+.sidebar a::before{
+    content:"";
+
+    position:absolute;
+
+    right:13px;
+    top:50%;
+
+    width:38px;
+    height:38px;
+
+    transform:
+        translateY(-50%)
+        scale(.72);
+
+    border-radius:12px;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17,168,189,.11),
+            rgba(124,92,252,.08)
+        );
+
+    opacity:0;
+
+    transition:
+        opacity .2s ease,
+        transform .2s ease;
+
+    pointer-events:none;
+}
+
+/* هاور آیکون */
+.sidebar a:hover img,
+.sidebar a:hover svg{
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(43%)
+        sepia(71%)
+        saturate(1100%)
+        hue-rotate(218deg)
+        brightness(96%)
+        contrast(94%)
+        !important;
+
+    transform:scale(1.10);
+}
+
+.sidebar a:hover::before{
+    opacity:1;
+    transform:
+        translateY(-50%)
+        scale(1);
+}
+
+/* آیتم فعال */
+.sidebar a.active img,
+.sidebar a[aria-current="page"] img,
+.sidebar a.active svg,
+.sidebar a[aria-current="page"] svg{
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(39%)
+        sepia(65%)
+        saturate(1150%)
+        hue-rotate(151deg)
+        brightness(88%)
+        contrast(96%)
+        !important;
+
+    opacity:1;
+}
+
+/* آیکون‌های کارت‌های آماری */
+.stat-icon img,
+.stat-card img{
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(39%)
+        sepia(36%)
+        saturate(1150%)
+        hue-rotate(151deg)
+        brightness(87%)
+        contrast(91%)
+        !important;
+
+    opacity:.95;
+
+    transition:
+        transform .2s ease,
+        filter .2s ease;
+}
+
+.stat:hover .stat-icon img,
+.stat-card:hover .stat-icon img{
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(43%)
+        sepia(71%)
+        saturate(1100%)
+        hue-rotate(218deg)
+        brightness(96%)
+        contrast(94%)
+        !important;
+
+    transform:
+        scale(1.08)
+        rotate(-3deg);
+}
+
+/* دکمه جمع‌کردن سایدبار */
+.sidebar-collapse{
+    display:flex !important;
+    align-items:center;
+    justify-content:center;
+
+    font-size:22px !important;
+
+    color:#087ea4 !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17,168,189,.08),
+            rgba(124,92,252,.07)
+        ) !important;
+}
+
+/* آیکون خروج */
+.sidebar a[href*="logout"] img{
+    filter:
+        brightness(0)
+        saturate(100%)
+        invert(42%)
+        sepia(66%)
+        saturate(1800%)
+        hue-rotate(315deg)
+        brightness(94%)
+        contrast(91%)
+        !important;
+}
+
+.sidebar a[href*="logout"]:hover img{
+    transform:scale(1.10);
+}
+
+/* موبایل */
+@media(max-width:850px){
+    .sidebar img,
+    .sidebar svg{
+        width:21px !important;
+        height:21px !important;
+    }
+}
+
+@media(max-width:520px){
+    .sidebar img,
+    .sidebar svg{
+        width:20px !important;
+        height:20px !important;
+    }
+
+    .sidebar a::before{
+        display:none;
+    }
+}
+</style>
+
+<!-- NEXUS AURORA STATUS FIX 1.0 -->
+<style>
+
+/* =========================================================
+   STATUS / SYSTEM ONLINE
+   ========================================================= */
+
+/* کانتینر وضعیت سامانه */
+.system-status,
+.system-status-card,
+.live-status,
+.online-status,
+.status-card{
+    color:#102a35 !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.96),
+            rgba(241,250,252,.92)
+        ) !important;
+
+    border-color:
+        rgba(8,126,164,.15) !important;
+
+    box-shadow:
+        0 12px 30px rgba(35,94,112,.07) !important;
+}
+
+/* متن «سامانه فعال است» */
+.system-status *,
+.system-status-card *,
+.live-status *,
+.online-status *,
+.status-card *{
+    color:#102a35 !important;
+}
+
+/* متن فعال */
+.system-status .status,
+.system-status-card .status,
+.live-status .status,
+.online-status .status{
+    color:#13845f !important;
+
+    background:
+        rgba(19,155,112,.09) !important;
+
+    border-color:
+        rgba(19,155,112,.16) !important;
+}
+
+/* نقطه سبز وضعیت */
+.system-status .dot,
+.system-status-card .dot,
+.live-status .dot,
+.online-status .dot,
+.status-card .dot{
+    background:#16b982 !important;
+
+    box-shadow:
+        0 0 0 4px rgba(22,185,130,.10),
+        0 0 14px rgba(22,185,130,.28) !important;
+}
+
+/* =========================================================
+   آیکون‌های واقعی را برنمی‌داریم
+   ========================================================= */
+
+/* فیلتر قبلی را خنثی می‌کنیم تا SVG اصلی دوباره دیده شود */
+.system-status img,
+.system-status svg,
+.system-status-card img,
+.system-status-card svg,
+.live-status img,
+.live-status svg,
+.online-status img,
+.online-status svg,
+.status-card img,
+.status-card svg{
+    filter:none !important;
+    opacity:1 !important;
+
+    visibility:visible !important;
+    display:block !important;
+
+    transform:none !important;
+}
+
+/* خود SVGها رنگ Aurora بگیرند، بدون حذف شدن */
+.system-status svg,
+.system-status-card svg,
+.live-status svg,
+.online-status svg{
+    color:#087ea4 !important;
+    fill:currentColor;
+}
+
+/* اگر آیکون به صورت img باشد */
+.system-status img,
+.system-status-card img,
+.live-status img,
+.online-status img{
+    filter:
+        saturate(.85)
+        brightness(.92)
+        !important;
+}
+
+/* =========================================================
+   آیکون‌های آمار
+   ========================================================= */
+
+.stat-icon{
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17,168,189,.11),
+            rgba(124,92,252,.09)
+        ) !important;
+
+    border:1px solid rgba(8,126,164,.12) !important;
+}
+
+/* تصویر آیکون را نمایش بده */
+.stat-icon img{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+
+    transform:none !important;
+
+    filter:
+        saturate(.75)
+        brightness(.82)
+        !important;
+}
+
+/* هاور */
+.stat-card:hover .stat-icon img,
+.stat:hover .stat-icon img{
+    display:block !important;
+    visibility:visible !important;
+    opacity:1 !important;
+
+    transform:scale(1.08) !important;
+
+    filter:
+        saturate(1.05)
+        brightness(.88)
+        !important;
+}
+
+/* =========================================================
+   جلوگیری از پوشاندن آیکون‌ها توسط pseudo-elementها
+   ========================================================= */
+
+.stat-icon,
+.stat-icon img,
+.sidebar a img,
+.sidebar a svg{
+    position:relative;
+    z-index:5;
+}
+
+/* =========================================================
+   وضعیت در موبایل
+   ========================================================= */
+
+@media(max-width:850px){
+
+    .system-status,
+    .system-status-card,
+    .live-status,
+    .online-status{
+        box-shadow:
+            0 8px 22px rgba(35,94,112,.06) !important;
+    }
+
+    .system-status img,
+    .system-status svg,
+    .system-status-card img,
+    .system-status-card svg{
+        display:block !important;
+        visibility:visible !important;
+    }
+}
+
+</style>
+
+<style>
+/* =========================================================
+   COLOR ICON OVERDRIVE — Library UI
+   فقط ظاهر آیکون‌ها؛ بدون تغییر منطق سایت
+   ========================================================= */
+
+:root{
+    --icon-purple:#a855f7;
+    --icon-blue:#38bdf8;
+    --icon-cyan:#22d3ee;
+    --icon-green:#34d399;
+    --icon-yellow:#facc15;
+    --icon-orange:#fb923c;
+    --icon-pink:#f472b6;
+    --icon-red:#fb7185;
+}
+
+/* آیکون‌های منوی کناری */
+.nav a:nth-child(1) .nav-icon img{
+    filter: invert(72%) sepia(88%) saturate(1200%) hue-rotate(170deg)
+            brightness(105%) contrast(105%)
+            drop-shadow(0 0 7px rgba(56,189,248,.75));
+}
+
+.nav a:nth-child(2) .nav-icon img{
+    filter: invert(74%) sepia(72%) saturate(1200%) hue-rotate(90deg)
+            brightness(105%) contrast(105%)
+            drop-shadow(0 0 7px rgba(52,211,153,.75));
+}
+
+.nav a:nth-child(3) .nav-icon img{
+    filter: invert(70%) sepia(80%) saturate(1400%) hue-rotate(210deg)
+            brightness(110%) contrast(105%)
+            drop-shadow(0 0 8px rgba(168,85,247,.8));
+}
+
+.nav a:nth-child(4) .nav-icon img{
+    filter: invert(80%) sepia(90%) saturate(1400%) hue-rotate(5deg)
+            brightness(108%) contrast(105%)
+            drop-shadow(0 0 8px rgba(250,204,21,.8));
+}
+
+.nav a:nth-child(5) .nav-icon img{
+    filter: invert(68%) sepia(90%) saturate(1600%) hue-rotate(315deg)
+            brightness(110%) contrast(105%)
+            drop-shadow(0 0 8px rgba(244,114,182,.8));
+}
+
+.nav a:nth-child(6) .nav-icon img{
+    filter: invert(67%) sepia(90%) saturate(1800%) hue-rotate(335deg)
+            brightness(108%) contrast(105%)
+            drop-shadow(0 0 8px rgba(251,113,133,.8));
+}
+
+/* آیکون‌های آماری */
+.stat-card:nth-child(1) .stat-icon img{
+    filter: invert(73%) sepia(80%) saturate(1300%) hue-rotate(165deg)
+            brightness(110%) drop-shadow(0 0 9px rgba(34,211,238,.8));
+}
+
+.stat-card:nth-child(2) .stat-icon img{
+    filter: invert(70%) sepia(80%) saturate(1500%) hue-rotate(90deg)
+            brightness(110%) drop-shadow(0 0 9px rgba(52,211,153,.8));
+}
+
+.stat-card:nth-child(3) .stat-icon img{
+    filter: invert(78%) sepia(90%) saturate(1500%) hue-rotate(5deg)
+            brightness(110%) drop-shadow(0 0 9px rgba(250,204,21,.8));
+}
+
+.stat-card:nth-child(4) .stat-icon img{
+    filter: invert(70%) sepia(90%) saturate(1500%) hue-rotate(280deg)
+            brightness(110%) drop-shadow(0 0 9px rgba(168,85,247,.8));
+}
+
+/* هاور فوق‌العاده */
+.nav a .nav-icon img,
+.stat-icon img{
+    transition:
+        filter .25s ease,
+        transform .25s ease;
+}
+
+.nav a:hover .nav-icon img{
+    transform: scale(1.18) rotate(-3deg);
+    filter:
+        brightness(1.35)
+        saturate(1.45)
+        drop-shadow(0 0 6px currentColor)
+        drop-shadow(0 0 14px currentColor);
+}
+
+.stat-card:hover .stat-icon img{
+    transform: scale(1.12);
+}
+
+/* هاله‌ی نرم اطراف آیکون‌ها */
+.nav-icon,
+.stat-icon{
+    position:relative;
+}
+
+.nav-icon::after,
+.stat-icon::after{
+    content:"";
+    position:absolute;
+    inset:4px;
+    border-radius:18px;
+    pointer-events:none;
+    opacity:.28;
+    filter:blur(12px);
+    z-index:-1;
+}
+
+/* رنگ هاله‌ها */
+.nav a:nth-child(1) .nav-icon::after{background:#38bdf8;}
+.nav a:nth-child(2) .nav-icon::after{background:#34d399;}
+.nav a:nth-child(3) .nav-icon::after{background:#a855f7;}
+.nav a:nth-child(4) .nav-icon::after{background:#facc15;}
+.nav a:nth-child(5) .nav-icon::after{background:#f472b6;}
+.nav a:nth-child(6) .nav-icon::after{background:#fb7185;}
+
+</style>
+
+
+<style id="FINAL-LIBRARY-ICON-SYSTEM">
+
+/* ============================================================
+   KETAB MADRESE
+   FINAL AURORA COLOR ICON SYSTEM
+   Version: 2.0
+   هدف:
+   - حذف ظاهر کدر آیکون‌ها
+   - حفظ SVG اصلی
+   - رنگ‌بندی اختصاصی هر بخش
+   - Glow
+   - Hover
+   - Active state
+   - Mobile support
+   - جلوگیری از تداخل CSSهای قبلی
+   ============================================================ */
+
+
+/* ============================================================
+   01 — VARIABLES
+   ============================================================ */
+
+:root{
+
+    --icon-dashboard: #38bdf8;
+    --icon-schools:   #34d399;
+    --icon-students:  #a78bfa;
+    --icon-books:     #fbbf24;
+    --icon-loans:     #fb7185;
+    --icon-excel:     #4ade80;
+    --icon-logout:    #f43f5e;
+
+    --icon-white:     #ffffff;
+
+    --icon-shadow-dashboard:
+        0 0 12px rgba(56,189,248,.45),
+        0 0 28px rgba(56,189,248,.20);
+
+    --icon-shadow-schools:
+        0 0 12px rgba(52,211,153,.45),
+        0 0 28px rgba(52,211,153,.20);
+
+    --icon-shadow-students:
+        0 0 12px rgba(167,139,250,.45),
+        0 0 28px rgba(167,139,250,.20);
+
+    --icon-shadow-books:
+        0 0 12px rgba(251,191,36,.45),
+        0 0 28px rgba(251,191,36,.20);
+
+    --icon-shadow-loans:
+        0 0 12px rgba(251,113,133,.45),
+        0 0 28px rgba(251,113,133,.20);
+
+    --icon-shadow-excel:
+        0 0 12px rgba(74,222,128,.45),
+        0 0 28px rgba(74,222,128,.20);
+
+    --icon-shadow-logout:
+        0 0 12px rgba(244,63,94,.45),
+        0 0 28px rgba(244,63,94,.20);
+}
+
+
+/* ============================================================
+   02 — RESET OLD FILTERS
+   ============================================================ */
+
+/*
+   SVGها خودشان چند رنگ هستند.
+   بنابراین فیلترهای قبلی که کل تصویر را رنگ می‌کردند
+   باید برای این سیستم خنثی شوند.
+*/
+
+.sidebar .nav-icon img,
+.sidebar .nav-icon svg,
+.stat-icon img,
+.stat-icon svg,
+.admin-badge img{
+
+    filter:none !important;
+
+    opacity:1 !important;
+
+    visibility:visible !important;
+
+    mix-blend-mode:normal !important;
+
+    transition:
+        transform .30s cubic-bezier(.2,.8,.2,1),
+        filter .30s ease,
+        opacity .30s ease;
+}
+
+
+/* ============================================================
+   03 — NAV ICON CONTAINER
+   ============================================================ */
+
+.sidebar .nav-icon{
+
+    position:relative !important;
+
+    width:48px !important;
+    height:48px !important;
+
+    min-width:48px !important;
+    min-height:48px !important;
+
+    display:flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    border-radius:16px !important;
+
+    overflow:visible !important;
+
+    background:
+        rgba(255,255,255,.78) !important;
+
+    border:
+        1px solid rgba(20,70,85,.10) !important;
+
+    box-shadow:
+        0 8px 20px rgba(20,60,70,.07),
+        inset 0 1px 0 rgba(255,255,255,.90) !important;
+
+    transition:
+        transform .30s ease,
+        background .30s ease,
+        border-color .30s ease,
+        box-shadow .30s ease;
+}
+
+
+/* ============================================================
+   04 — ICON SIZE
+   ============================================================ */
+
+.sidebar .nav-icon img{
+
+    width:34px !important;
+    height:34px !important;
+
+    max-width:34px !important;
+    max-height:34px !important;
+
+    object-fit:contain !important;
+
+    display:block !important;
+
+    transform:translateZ(0);
+
+    border-radius:9px;
+}
+
+
+/* ============================================================
+   05 — COLORED HALO
+   ============================================================ */
+
+.sidebar .nav-icon::before{
+
+    content:"";
+
+    position:absolute;
+
+    inset:-6px;
+
+    border-radius:20px;
+
+    opacity:.16;
+
+    filter:blur(9px);
+
+    z-index:-1;
+
+    pointer-events:none;
+
+    transition:
+        opacity .30s ease,
+        transform .30s ease;
+}
+
+
+/* ============================================================
+   06 — DASHBOARD
+   ============================================================ */
+
+.sidebar .nav a:nth-child(1) .nav-icon{
+
+    border-color:
+        rgba(56,189,248,.28) !important;
+
+    box-shadow:
+        0 8px 24px rgba(56,189,248,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(1) .nav-icon::before{
+
+    background:var(--icon-dashboard);
+
+}
+
+.sidebar .nav a:nth-child(1) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 7px rgba(56,189,248,.45))
+        !important;
+}
+
+
+/* ============================================================
+   07 — SCHOOLS
+   ============================================================ */
+
+.sidebar .nav a:nth-child(2) .nav-icon{
+
+    border-color:
+        rgba(52,211,153,.28) !important;
+
+    box-shadow:
+        0 8px 24px rgba(52,211,153,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(2) .nav-icon::before{
+
+    background:var(--icon-schools);
+
+}
+
+.sidebar .nav a:nth-child(2) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 7px rgba(52,211,153,.45))
+        !important;
+}
+
+
+/* ============================================================
+   08 — STUDENTS
+   ============================================================ */
+
+.sidebar .nav a:nth-child(3) .nav-icon{
+
+    border-color:
+        rgba(167,139,250,.30) !important;
+
+    box-shadow:
+        0 8px 24px rgba(167,139,250,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(3) .nav-icon::before{
+
+    background:var(--icon-students);
+
+}
+
+.sidebar .nav a:nth-child(3) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(167,139,250,.48))
+        !important;
+}
+
+
+/* ============================================================
+   09 — BOOKS
+   ============================================================ */
+
+.sidebar .nav a:nth-child(4) .nav-icon{
+
+    border-color:
+        rgba(251,191,36,.30) !important;
+
+    box-shadow:
+        0 8px 24px rgba(251,191,36,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(4) .nav-icon::before{
+
+    background:var(--icon-books);
+
+}
+
+.sidebar .nav a:nth-child(4) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(251,191,36,.48))
+        !important;
+}
+
+
+/* ============================================================
+   10 — LOANS
+   ============================================================ */
+
+.sidebar .nav a:nth-child(5) .nav-icon{
+
+    border-color:
+        rgba(251,113,133,.30) !important;
+
+    box-shadow:
+        0 8px 24px rgba(251,113,133,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(5) .nav-icon::before{
+
+    background:var(--icon-loans);
+
+}
+
+.sidebar .nav a:nth-child(5) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(251,113,133,.48))
+        !important;
+}
+
+
+/* ============================================================
+   11 — EXCEL
+   ============================================================ */
+
+.sidebar .nav a:nth-child(6) .nav-icon{
+
+    border-color:
+        rgba(74,222,128,.30) !important;
+
+    box-shadow:
+        0 8px 24px rgba(74,222,128,.12),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar .nav a:nth-child(6) .nav-icon::before{
+
+    background:var(--icon-excel);
+
+}
+
+.sidebar .nav a:nth-child(6) .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(74,222,128,.48))
+        !important;
+}
+
+
+/* ============================================================
+   12 — LOGOUT
+   ============================================================ */
+
+.sidebar a.logout .nav-icon{
+
+    border-color:
+        rgba(244,63,94,.30) !important;
+
+    box-shadow:
+        0 8px 24px rgba(244,63,94,.10),
+        inset 0 1px 0 rgba(255,255,255,.95) !important;
+}
+
+.sidebar a.logout .nav-icon::before{
+
+    background:var(--icon-logout);
+
+}
+
+.sidebar a.logout .nav-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(244,63,94,.48))
+        !important;
+}
+
+
+/* ============================================================
+   13 — HOVER
+   ============================================================ */
+
+.sidebar .nav a:hover .nav-icon{
+
+    transform:
+        translateY(-2px)
+        scale(1.04);
+
+    background:
+        rgba(255,255,255,.98) !important;
+
+    box-shadow:
+        0 14px 30px rgba(20,60,70,.12),
+        inset 0 1px 0 #ffffff !important;
+}
+
+.sidebar .nav a:hover .nav-icon::before{
+
+    opacity:.32;
+
+    transform:scale(1.10);
+
+}
+
+.sidebar .nav a:hover .nav-icon img{
+
+    transform:
+        scale(1.10)
+        rotate(-2deg);
+}
+
+
+/* ============================================================
+   14 — ACTIVE DASHBOARD
+   ============================================================ */
+
+.sidebar .nav a.active .nav-icon{
+
+    transform:scale(1.03);
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,1),
+            rgba(240,250,255,.96)
+        ) !important;
+
+    border-color:
+        rgba(56,189,248,.45) !important;
+
+    box-shadow:
+        0 12px 30px rgba(56,189,248,.18),
+        0 0 0 3px rgba(56,189,248,.07),
+        inset 0 1px 0 #ffffff !important;
+}
+
+.sidebar .nav a.active .nav-icon::before{
+
+    opacity:.38;
+
+    transform:scale(1.08);
+
+}
+
+
+/* ============================================================
+   15 — STAT ICONS
+   ============================================================ */
+
+.stat-icon{
+
+    position:relative !important;
+
+    width:58px !important;
+    height:58px !important;
+
+    min-width:58px !important;
+
+    display:flex !important;
+
+    align-items:center !important;
+    justify-content:center !important;
+
+    border-radius:19px !important;
+
+    overflow:visible !important;
+
+    background:
+        rgba(255,255,255,.92) !important;
+
+    border:
+        1px solid rgba(20,70,85,.10) !important;
+
+    transition:
+        transform .30s ease,
+        box-shadow .30s ease;
+}
+
+.stat-icon img{
+
+    width:42px !important;
+    height:42px !important;
+
+    object-fit:contain !important;
+
+    display:block !important;
+
+    border-radius:10px;
+
+    filter:none !important;
+}
+
+
+/* ============================================================
+   16 — STAT COLOR VARIANTS
+   ============================================================ */
+
+.stat:nth-child(1) .stat-icon{
+
+    border-color:rgba(52,211,153,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(52,211,153,.13) !important;
+}
+
+.stat:nth-child(1) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(52,211,153,.45))
+        !important;
+}
+
+
+.stat:nth-child(2) .stat-icon{
+
+    border-color:rgba(167,139,250,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(167,139,250,.13) !important;
+}
+
+.stat:nth-child(2) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(167,139,250,.45))
+        !important;
+}
+
+
+.stat:nth-child(3) .stat-icon{
+
+    border-color:rgba(56,189,248,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(56,189,248,.13) !important;
+}
+
+.stat:nth-child(3) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(56,189,248,.45))
+        !important;
+}
+
+
+.stat:nth-child(4) .stat-icon{
+
+    border-color:rgba(251,113,133,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(251,113,133,.13) !important;
+}
+
+.stat:nth-child(4) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(251,113,133,.45))
+        !important;
+}
+
+
+.stat:nth-child(5) .stat-icon{
+
+    border-color:rgba(251,191,36,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(251,191,36,.13) !important;
+}
+
+.stat:nth-child(5) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(251,191,36,.45))
+        !important;
+}
+
+
+.stat:nth-child(6) .stat-icon{
+
+    border-color:rgba(74,222,128,.30) !important;
+
+    box-shadow:
+        0 10px 26px rgba(74,222,128,.13) !important;
+}
+
+.stat:nth-child(6) .stat-icon img{
+
+    filter:
+        drop-shadow(0 0 8px rgba(74,222,128,.45))
+        !important;
+}
+
+
+/* ============================================================
+   17 — STAT HOVER
+   ============================================================ */
+
+.stat:hover .stat-icon{
+
+    transform:
+        translateY(-3px)
+        scale(1.06);
+
+}
+
+.stat:hover .stat-icon img{
+
+    transform:
+        scale(1.10)
+        rotate(-3deg);
+}
+
+
+/* ============================================================
+   18 — ADMIN BADGE
+   ============================================================ */
+
+.admin-badge{
+
+    position:relative;
+
+    display:flex;
+
+    align-items:center;
+
+    gap:10px;
+
+    border-radius:18px !important;
+
+    padding:8px 13px !important;
+
+    background:
+        rgba(255,255,255,.88) !important;
+
+    border:
+        1px solid rgba(56,189,248,.18) !important;
+
+    box-shadow:
+        0 10px 25px rgba(30,80,100,.08) !important;
+}
+
+.admin-badge img{
+
+    width:34px !important;
+    height:34px !important;
+
+    object-fit:contain !important;
+
+    border-radius:9px;
+
+    filter:
+        drop-shadow(0 0 7px rgba(56,189,248,.40))
+        !important;
+}
+
+
+/* ============================================================
+   19 — NAV TEXT
+   ============================================================ */
+
+.sidebar .nav a{
+
+    transition:
+        transform .25s ease,
+        background .25s ease,
+        box-shadow .25s ease !important;
+}
+
+.sidebar .nav a:hover{
+
+    transform:
+        translateX(-3px);
+}
+
+
+/* ============================================================
+   20 — LOGOUT TEXT
+   ============================================================ */
+
+.sidebar a.logout:hover{
+
+    background:
+        rgba(244,63,94,.055) !important;
+}
+
+
+/* ============================================================
+   21 — MOBILE
+   ============================================================ */
+
+@media(max-width:850px){
+
+    .sidebar .nav-icon{
+
+        width:44px !important;
+        height:44px !important;
+
+        min-width:44px !important;
+        min-height:44px !important;
+
+        border-radius:14px !important;
+    }
+
+    .sidebar .nav-icon img{
+
+        width:31px !important;
+        height:31px !important;
+    }
+
+    .stat-icon{
+
+        width:52px !important;
+        height:52px !important;
+
+        min-width:52px !important;
+
+        border-radius:16px !important;
+    }
+
+    .stat-icon img{
+
+        width:37px !important;
+        height:37px !important;
+    }
+}
+
+
+/* ============================================================
+   22 — SMALL PHONE
+   ============================================================ */
+
+@media(max-width:520px){
+
+    .sidebar .nav-icon{
+
+        width:42px !important;
+        height:42px !important;
+
+        min-width:42px !important;
+        min-height:42px !important;
+    }
+
+    .sidebar .nav-icon img{
+
+        width:29px !important;
+        height:29px !important;
+    }
+
+    .stat-icon{
+
+        width:49px !important;
+        height:49px !important;
+
+        min-width:49px !important;
+    }
+
+    .stat-icon img{
+
+        width:34px !important;
+        height:34px !important;
+    }
+}
+
+
+/* ============================================================
+   23 — ACCESSIBILITY
+   ============================================================ */
+
+@media(prefers-reduced-motion:reduce){
+
+    .sidebar .nav a,
+    .sidebar .nav-icon,
+    .sidebar .nav-icon img,
+    .stat-icon,
+    .stat-icon img{
+
+        transition:none !important;
+
+        animation:none !important;
+    }
+}
+
+
+/* ============================================================
+   24 — FINAL VISIBILITY SAFETY
+   ============================================================ */
+
+.sidebar .nav-icon,
+.sidebar .nav-icon img,
+.stat-icon,
+.stat-icon img,
+.admin-badge img{
+
+    visibility:visible !important;
+
+    opacity:1 !important;
+}
+
+
+/* ============================================================
+   END
+   ============================================================ */
+
+</style>
+
+
+<style id="NEON-LIBRARY-CONTROL-CENTER">
+
+/* ============================================================
+   NEON LIBRARY CONTROL CENTER
+   VERSION 2.0
+   Visual Layer Only
+   ============================================================ */
+
+
+/* ============================================================
+   COLOR SYSTEM
+   ============================================================ */
+
+:root {
+
+    --neon-cyan: #55e6d5;
+    --neon-blue: #4da6ff;
+    --neon-purple: #9b6cff;
+    --neon-pink: #ff67c7;
+    --neon-green: #4fffa8;
+    --neon-yellow: #ffd76a;
+    --neon-orange: #ff9b61;
+    --neon-red: #ff667c;
+
+    --bg-main: #050b13;
+    --bg-second: #091522;
+
+    --glass:
+        rgba(255,255,255,.055);
+
+    --glass-hover:
+        rgba(255,255,255,.085);
+
+    --glass-border:
+        rgba(255,255,255,.095);
+
+}
+
+
+/* ============================================================
+   GLOBAL BODY
+   ============================================================ */
+
+html {
+    scroll-behavior: smooth;
+}
+
+
+body {
+
+    background:
+
+        radial-gradient(
+            circle at 8% 8%,
+            rgba(85,230,213,.16),
+            transparent 26%
+        ),
+
+        radial-gradient(
+            circle at 92% 8%,
+            rgba(155,108,255,.17),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 85% 90%,
+            rgba(255,103,199,.12),
+            transparent 28%
+        ),
+
+        radial-gradient(
+            circle at 20% 90%,
+            rgba(77,166,255,.09),
+            transparent 30%
+        ),
+
+        linear-gradient(
+            135deg,
+            #03070d,
+            #07131d 45%,
+            #080d1b
+        ) !important;
+
+    color: #f4fffd !important;
+
+    min-height: 100vh;
+
+}
+
+
+/* ============================================================
+   AMBIENT LIGHT LAYERS
+   ============================================================ */
+
+body::before {
+
+    content: "";
+
+    position: fixed;
+
+    width: 520px;
+    height: 520px;
+
+    left: -180px;
+    top: 10%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(85,230,213,.14),
+            transparent 68%
+        );
+
+    filter: blur(35px);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation:
+        neonOrbOne 13s ease-in-out infinite alternate;
+
+}
+
+
+body::after {
+
+    content: "";
+
+    position: fixed;
+
+    width: 560px;
+    height: 560px;
+
+    right: -220px;
+    bottom: -180px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(155,108,255,.14),
+            transparent 68%
+        );
+
+    filter: blur(40px);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation:
+        neonOrbTwo 17s ease-in-out infinite alternate;
+
+}
+
+
+@keyframes neonOrbOne {
+
+    0% {
+        transform:
+            translate3d(0,0,0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate3d(130px,60px,0)
+            scale(1.18);
+    }
+
+    100% {
+        transform:
+            translate3d(40px,-80px,0)
+            scale(.94);
+    }
+
+}
+
+
+@keyframes neonOrbTwo {
+
+    0% {
+        transform:
+            translate3d(0,0,0)
+            scale(1);
+    }
+
+    50% {
+        transform:
+            translate3d(-100px,-70px,0)
+            scale(1.15);
+    }
+
+    100% {
+        transform:
+            translate3d(-40px,50px,0)
+            scale(.92);
+    }
+
+}
+
+
+/* ============================================================
+   CONTENT LAYER
+   ============================================================ */
+
+.layout,
+.main {
+
+    position: relative;
+
+    z-index: 1;
+
+}
+
+
+/* ============================================================
+   SIDEBAR
+   ============================================================ */
+
+.sidebar {
+
+    background:
+
+        linear-gradient(
+            180deg,
+            rgba(5,14,23,.97),
+            rgba(4,9,17,.96)
+        ) !important;
+
+    border-right:
+        1px solid
+        rgba(85,230,213,.13) !important;
+
+    box-shadow:
+
+        18px 0 70px
+        rgba(0,0,0,.32),
+
+        inset -1px 0
+        rgba(255,255,255,.035);
+
+}
+
+
+/* ============================================================
+   SIDEBAR NEON LINE
+   ============================================================ */
+
+.sidebar::after {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    right: -1px;
+
+    width: 1px;
+    height: 100%;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            transparent,
+            var(--neon-cyan),
+            var(--neon-purple),
+            var(--neon-pink),
+            transparent
+        );
+
+    opacity: .55;
+
+    animation:
+        sidebarLine 5s linear infinite;
+
+}
+
+
+@keyframes sidebarLine {
+
+    0% {
+        opacity: .2;
+        transform: translateY(-15%);
+    }
+
+    50% {
+        opacity: .8;
+    }
+
+    100% {
+        opacity: .2;
+        transform: translateY(15%);
+    }
+
+}
+
+
+/* ============================================================
+   BRAND
+   ============================================================ */
+
+.brand {
+
+    position: relative;
+
+    padding-bottom: 24px !important;
+
+}
+
+
+.brand-title {
+
+    font-weight: 900 !important;
+
+    background:
+
+        linear-gradient(
+            100deg,
+            #ffffff,
+            #9ffff5,
+            #b99cff,
+            #ffffff
+        );
+
+    background-size: 250% auto;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        brandGradient 6s linear infinite;
+
+}
+
+
+@keyframes brandGradient {
+
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 250% center;
+    }
+
+}
+
+
+/* ============================================================
+   NAV
+   ============================================================ */
+
+.nav a {
+
+    position: relative;
+
+    overflow: hidden;
+
+    border-radius: 16px !important;
+
+    transition:
+
+        transform .25s ease,
+        background .25s ease,
+        box-shadow .25s ease !important;
+
+}
+
+
+.nav a::before {
+
+    content: "";
+
+    position: absolute;
+
+    left: -120%;
+
+    top: 0;
+
+    width: 80%;
+    height: 100%;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255,255,255,.09),
+            transparent
+        );
+
+    transform: skewX(-20deg);
+
+    transition:
+        left .6s ease;
+
+}
+
+
+.nav a:hover::before {
+
+    left: 140%;
+
+}
+
+
+.nav a:hover {
+
+    transform:
+        translateX(-5px)
+        scale(1.012);
+
+    background:
+
+        linear-gradient(
+            90deg,
+            rgba(85,230,213,.10),
+            rgba(155,108,255,.08)
+        ) !important;
+
+    box-shadow:
+
+        0 10px 30px
+        rgba(0,0,0,.22),
+
+        0 0 25px
+        rgba(85,230,213,.07);
+
+}
+
+
+.nav a.active {
+
+    background:
+
+        linear-gradient(
+            100deg,
+            rgba(85,230,213,.16),
+            rgba(77,166,255,.09),
+            rgba(155,108,255,.14)
+        ) !important;
+
+    box-shadow:
+
+        inset 0 0 0 1px
+        rgba(85,230,213,.16),
+
+        0 10px 35px
+        rgba(0,0,0,.22),
+
+        0 0 30px
+        rgba(85,230,213,.08);
+
+}
+
+
+/* ============================================================
+   NAV ICON
+   ============================================================ */
+
+.sidebar .nav-icon {
+
+    width: 46px !important;
+    height: 46px !important;
+
+    border-radius: 14px !important;
+
+    background:
+        rgba(255,255,255,.035) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.06);
+
+    transition:
+
+        transform .25s ease,
+        box-shadow .25s ease,
+        background .25s ease;
+
+}
+
+
+.sidebar a:hover .nav-icon {
+
+    transform:
+        rotate(-4deg)
+        scale(1.09);
+
+    background:
+        rgba(255,255,255,.065) !important;
+
+    box-shadow:
+
+        0 0 25px
+        rgba(85,230,213,.12);
+
+}
+
+
+.sidebar .nav-icon img {
+
+    width: 35px !important;
+    height: 35px !important;
+
+    filter: none !important;
+
+}
+
+
+/* ============================================================
+   TOPBAR
+   ============================================================ */
+
+.topbar {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.075),
+            rgba(255,255,255,.025)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.09) !important;
+
+    border-radius: 25px !important;
+
+    box-shadow:
+
+        0 20px 65px
+        rgba(0,0,0,.30),
+
+        inset 0 1px
+        rgba(255,255,255,.055);
+
+    backdrop-filter:
+        blur(20px);
+
+    -webkit-backdrop-filter:
+        blur(20px);
+
+}
+
+
+.topbar::after {
+
+    content: "";
+
+    position: absolute;
+
+    left: -20%;
+
+    bottom: 0;
+
+    width: 140%;
+    height: 1px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            transparent,
+            var(--neon-cyan),
+            var(--neon-purple),
+            var(--neon-pink),
+            transparent
+        );
+
+    opacity: .55;
+
+    animation:
+        topbarScan 7s linear infinite;
+
+}
+
+
+@keyframes topbarScan {
+
+    0% {
+        transform: translateX(-25%);
+    }
+
+    100% {
+        transform: translateX(25%);
+    }
+
+}
+
+
+/* ============================================================
+   WELCOME TITLE
+   ============================================================ */
+
+.welcome h1 {
+
+    background:
+
+        linear-gradient(
+            100deg,
+            #ffffff,
+            #9efff5,
+            #a993ff,
+            #ff8fd7
+        );
+
+    background-size:
+        300% auto;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        titleFlow 7s linear infinite;
+
+    text-shadow:
+        0 0 35px
+        rgba(85,230,213,.08);
+
+}
+
+
+@keyframes titleFlow {
+
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 300% center;
+    }
+
+}
+
+
+.welcome p {
+
+    color:
+        rgba(255,255,255,.60) !important;
+
+}
+
+
+/* ============================================================
+   ADMIN BADGE
+   ============================================================ */
+
+.admin-badge {
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(85,230,213,.10),
+            rgba(155,108,255,.10),
+            rgba(255,103,199,.07)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(85,230,213,.17) !important;
+
+    border-radius:
+        18px !important;
+
+    box-shadow:
+
+        0 12px 35px
+        rgba(0,0,0,.22),
+
+        0 0 30px
+        rgba(85,230,213,.06);
+
+}
+
+
+.admin-badge img {
+
+    width: 42px !important;
+    height: 42px !important;
+
+    filter: none !important;
+
+    border-radius: 13px;
+
+    box-shadow:
+
+        0 0 25px
+        rgba(85,230,213,.20);
+
+}
+
+
+/* ============================================================
+   STATS GRID
+   ============================================================ */
+
+.stats {
+
+    gap: 18px !important;
+
+}
+
+
+/* ============================================================
+   STAT CARDS
+   ============================================================ */
+
+.stat {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.072),
+            rgba(255,255,255,.025)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.085) !important;
+
+    border-radius:
+        23px !important;
+
+    box-shadow:
+
+        0 18px 55px
+        rgba(0,0,0,.27),
+
+        inset 0 1px
+        rgba(255,255,255,.04);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+    transform:
+        translateY(0);
+
+    transition:
+
+        transform .35s cubic-bezier(.2,.8,.2,1),
+        box-shadow .35s ease,
+        border-color .35s ease;
+
+    animation:
+        statEntrance .7s ease both;
+
+}
+
+
+/* moving light */
+
+.stat::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 160px;
+    height: 160px;
+
+    right: -90px;
+    top: -90px;
+
+    border-radius: 50%;
+
+    background:
+
+        radial-gradient(
+            circle,
+            rgba(85,230,213,.17),
+            transparent 68%
+        );
+
+    pointer-events: none;
+
+    transition:
+        transform .4s ease;
+
+}
+
+
+.stat:hover::after {
+
+    transform:
+        scale(1.5);
+
+}
+
+
+.stat:hover {
+
+    transform:
+        translateY(-9px)
+        scale(1.012);
+
+    border-color:
+        rgba(85,230,213,.22) !important;
+
+    box-shadow:
+
+        0 30px 75px
+        rgba(0,0,0,.34),
+
+        0 0 40px
+        rgba(85,230,213,.09);
+
+}
+
+
+@keyframes statEntrance {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(25px)
+            scale(.97);
+
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0)
+            scale(1);
+
+    }
+
+}
+
+
+/* ============================================================
+   STAT ICON
+   ============================================================ */
+
+.stat-icon {
+
+    width: 55px !important;
+    height: 55px !important;
+
+    border-radius:
+        17px !important;
+
+    background:
+        rgba(255,255,255,.045) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08);
+
+    box-shadow:
+
+        0 10px 28px
+        rgba(0,0,0,.20);
+
+    transition:
+
+        transform .3s ease,
+        box-shadow .3s ease;
+
+}
+
+
+.stat:hover .stat-icon {
+
+    transform:
+        rotate(-4deg)
+        scale(1.08);
+
+    box-shadow:
+
+        0 0 30px
+        rgba(85,230,213,.12);
+
+}
+
+
+.stat-icon img {
+
+    width: 42px !important;
+    height: 42px !important;
+
+    filter:
+        none !important;
+
+}
+
+
+/* ============================================================
+   STAT TEXT
+   ============================================================ */
+
+.stat-label {
+
+    color:
+        rgba(255,255,255,.70) !important;
+
+}
+
+
+.stat-value {
+
+    font-size:
+        clamp(30px,4vw,43px) !important;
+
+    font-weight:
+        900 !important;
+
+    background:
+
+        linear-gradient(
+            100deg,
+            #ffffff,
+            #9ffff6,
+            #b9a3ff
+        );
+
+    background-size:
+        200% auto;
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color: transparent;
+
+    animation:
+        numberGlow 5s linear infinite;
+
+}
+
+
+@keyframes numberGlow {
+
+    0% {
+        background-position: 0% center;
+    }
+
+    100% {
+        background-position: 200% center;
+    }
+
+}
+
+
+.stat-description {
+
+    color:
+        rgba(255,255,255,.48) !important;
+
+}
+
+
+/* ============================================================
+   ALERTS
+   ============================================================ */
+
+.alert {
+
+    position: relative;
+
+    overflow: hidden;
+
+    background:
+
+        linear-gradient(
+            135deg,
+            rgba(255,255,255,.06),
+            rgba(255,255,255,.025)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08) !important;
+
+    border-radius:
+        20px !important;
+
+    box-shadow:
+
+        0 15px 45px
+        rgba(0,0,0,.22);
+
+    backdrop-filter:
+        blur(15px);
+
+}
+
+
+.alert::after {
+
+    content: "";
+
+    position: absolute;
+
+    width: 100px;
+    height: 100px;
+
+    right: -50px;
+    top: -50px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(85,230,213,.08);
+
+    filter:
+        blur(10px);
+
+}
+
+
+.alert.danger {
+
+    border-color:
+        rgba(255,102,124,.24) !important;
+
+    box-shadow:
+
+        0 15px 50px
+        rgba(255,70,100,.07);
+
+}
+
+
+/* ============================================================
+   PANELS
+   ============================================================ */
+
+.panel {
+
+    background:
+
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.065),
+            rgba(255,255,255,.022)
+        ) !important;
+
+    border:
+        1px solid
+        rgba(255,255,255,.08) !important;
+
+    border-radius:
+        24px !important;
+
+    box-shadow:
+
+        0 20px 65px
+        rgba(0,0,0,.26),
+
+        inset 0 1px
+        rgba(255,255,255,.035);
+
+    backdrop-filter:
+        blur(18px);
+
+    -webkit-backdrop-filter:
+        blur(18px);
+
+}
+
+
+/* ============================================================
+   PANEL HEADER
+   ============================================================ */
+
+.panel-header {
+
+    border-bottom:
+        1px solid
+        rgba(255,255,255,.065) !important;
+
+}
+
+
+.panel-title {
+
+    font-weight:
+        850 !important;
+
+    background:
+
+        linear-gradient(
+            100deg,
+            #ffffff,
+            #9ffff5
+        );
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent;
+
+}
+
+
+/* ============================================================
+   TABLE ROWS
+   ============================================================ */
+
+.panel table tbody tr {
+
+    transition:
+
+        background .22s ease,
+        transform .22s ease;
+
+}
+
+
+.panel table tbody tr:hover {
+
+    background:
+        rgba(85,230,213,.035) !important;
+
+}
+
+
+/* ============================================================
+   BUTTONS
+   ============================================================ */
+
+button,
+.btn {
+
+    transition:
+
+        transform .22s ease,
+        box-shadow .22s ease,
+        filter .22s ease !important;
+
+}
+
+
+button:hover,
+.btn:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+
+        0 10px 30px
+        rgba(0,0,0,.25),
+
+        0 0 25px
+        rgba(85,230,213,.08);
+
+}
+
+
+/* ============================================================
+   NEON DIVIDERS
+   ============================================================ */
+
+.nav-title {
+
+    color:
+        rgba(155,108,255,.72) !important;
+
+}
+
+
+.nav-title::after {
+
+    content: "";
+
+    display: block;
+
+    width: 38px;
+    height: 2px;
+
+    margin-top: 7px;
+
+    border-radius: 20px;
+
+    background:
+
+        linear-gradient(
+            90deg,
+            var(--neon-cyan),
+            var(--neon-purple),
+            transparent
+        );
+
+}
+
+
+/* ============================================================
+   SELECTION
+   ============================================================ */
+
+::selection {
+
+    background:
+        rgba(85,230,213,.30);
+
+    color:
+        #ffffff;
+
+}
+
+
+/* ============================================================
+   SCROLLBAR
+   ============================================================ */
+
+::-webkit-scrollbar {
+
+    width: 8px;
+    height: 8px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background:
+        rgba(0,0,0,.25);
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    border-radius:
+        50px;
+
+    background:
+
+        linear-gradient(
+            180deg,
+            var(--neon-cyan),
+            var(--neon-purple)
+        );
+
+    box-shadow:
+
+        0 0 12px
+        rgba(85,230,213,.25);
+
+}
+
+
+::-webkit-scrollbar-thumb:hover {
+
+    background:
+
+        linear-gradient(
+            180deg,
+            var(--neon-pink),
+            var(--neon-purple)
+        );
+
+}
+
+
+/* ============================================================
+   MOBILE
+   ============================================================ */
+
+@media (max-width: 800px) {
+
+    .topbar {
+
+        border-radius:
+            18px !important;
+
+    }
+
+    .stat {
+
+        border-radius:
+            19px !important;
+
+    }
+
+    .stat-icon {
+
+        width: 48px !important;
+        height: 48px !important;
+
+    }
+
+    .stat-icon img {
+
+        width: 36px !important;
+        height: 36px !important;
+
+    }
+
+}
+
+
+/* ============================================================
+   REDUCED MOTION
+   ============================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+
+    *,
+    *::before,
+    *::after {
+
+        animation-duration:
+            .01ms !important;
+
+        animation-iteration-count:
+            1 !important;
+
+        transition-duration:
+            .01ms !important;
+
+    }
+
+}
+
+</style>
+
+
+<script id="NEON-LIBRARY-INTERACTIONS">
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ========================================================
+       STAGGER CARD ENTRANCE
+       ======================================================== */
+
+    document
+        .querySelectorAll(".stat")
+        .forEach((card, index) => {
+
+            card.style.animationDelay =
+                `${index * 90}ms`;
+
+        });
+
+
+    /* ========================================================
+       SUBTLE MOUSE TILT
+       ======================================================== */
+
+    const cards =
+        document.querySelectorAll(".stat");
+
+    cards.forEach(card => {
+
+        card.addEventListener("mousemove", event => {
+
+            const rect =
+                card.getBoundingClientRect();
+
+            const x =
+                event.clientX - rect.left;
+
+            const y =
+                event.clientY - rect.top;
+
+            const centerX =
+                rect.width / 2;
+
+            const centerY =
+                rect.height / 2;
+
+            const rotateX =
+                ((y - centerY) / centerY) * -2;
+
+            const rotateY =
+                ((x - centerX) / centerX) * 2;
+
+            card.style.transform =
+                `translateY(-9px)
+                 scale(1.012)
+                 perspective(800px)
+                 rotateX(${rotateX}deg)
+                 rotateY(${rotateY}deg)`;
+
+        });
+
+
+        card.addEventListener("mouseleave", () => {
+
+            card.style.transform =
+                "";
+
+        });
+
+    });
+
+
+    /* ========================================================
+       GLOW FOLLOWER FOR DESKTOP
+       ======================================================== */
+
+    const glow =
+        document.createElement("div");
+
+    glow.style.position =
+        "fixed";
+
+    glow.style.width =
+        "180px";
+
+    glow.style.height =
+        "180px";
+
+    glow.style.borderRadius =
+        "50%";
+
+    glow.style.pointerEvents =
+        "none";
+
+    glow.style.zIndex =
+        "0";
+
+    glow.style.background =
+        "radial-gradient(circle, rgba(85,230,213,.055), transparent 68%)";
+
+    glow.style.filter =
+        "blur(10px)";
+
+    glow.style.transform =
+        "translate(-50%,-50%)";
+
+    glow.style.transition =
+        "left .18s ease-out, top .18s ease-out";
+
+    document.body.appendChild(glow);
+
+
+    document.addEventListener("mousemove", event => {
+
+        glow.style.left =
+            event.clientX + "px";
+
+        glow.style.top =
+            event.clientY + "px";
+
+    });
+
+
+    /* ========================================================
+       ACTIVE NAV MICRO EFFECT
+       ======================================================== */
+
+    document
+        .querySelectorAll(".nav a")
+        .forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                link.style.transform =
+                    "scale(.97)";
+
+                setTimeout(() => {
+
+                    link.style.transform =
+                        "";
+
+                }, 130);
+
+            });
+
+        });
+
+});
+
+</script>
+
+
+<style id="BRIGHT-NEON-LIBRARY">
+
+/* =========================================================
+   ☀️ BRIGHT NEON LIBRARY
+   روشن + رنگی + واضح + زنده
+   ========================================================= */
+
+:root {
+    --cyan: #00bfae;
+    --blue: #287cff;
+    --purple: #8b45ff;
+    --pink: #f13cff;
+    --green: #12b866;
+    --orange: #ff7a00;
+    --yellow: #f5b800;
+    --red: #ef3f55;
+}
+
+
+/* =========================================================
+   🌤️ PAGE
+   ========================================================= */
+
+body {
+    color: #172033 !important;
+
+    background:
+        radial-gradient(
+            circle at 5% 10%,
+            rgba(0,191,174,.20),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 95% 10%,
+            rgba(139,69,255,.18),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 90% 90%,
+            rgba(241,60,255,.15),
+            transparent 25%
+        ),
+        linear-gradient(
+            135deg,
+            #f8ffff 0%,
+            #eef9ff 45%,
+            #f8f4ff 100%
+        ) !important;
+}
+
+
+/* نورهای متحرک */
+
+body::before {
+    content: "";
+
+    position: fixed;
+
+    width: 430px;
+    height: 430px;
+
+    left: -180px;
+    top: 12%;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(0,191,174,.18),
+            transparent 70%
+        );
+
+    filter: blur(20px);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation:
+        brightOrb 10s ease-in-out infinite alternate;
+}
+
+
+body::after {
+    content: "";
+
+    position: fixed;
+
+    width: 430px;
+    height: 430px;
+
+    right: -180px;
+    bottom: -100px;
+
+    border-radius: 50%;
+
+    background:
+        radial-gradient(
+            circle,
+            rgba(139,69,255,.17),
+            transparent 70%
+        );
+
+    filter: blur(20px);
+
+    pointer-events: none;
+
+    z-index: 0;
+
+    animation:
+        brightOrb2 13s ease-in-out infinite alternate;
+}
+
+
+@keyframes brightOrb {
+
+    from {
+        transform:
+            translate(0,0)
+            scale(1);
+    }
+
+    to {
+        transform:
+            translate(120px,70px)
+            scale(1.2);
+    }
+
+}
+
+
+@keyframes brightOrb2 {
+
+    from {
+        transform:
+            translate(0,0)
+            scale(1);
+    }
+
+    to {
+        transform:
+            translate(-100px,-70px)
+            scale(1.18);
+    }
+
+}
+
+
+.layout,
+.main {
+    position: relative;
+    z-index: 1;
+}
+
+
+/* =========================================================
+   🎨 SIDEBAR
+   ========================================================= */
+
+.sidebar {
+
+    background:
+        linear-gradient(
+            180deg,
+            #ffffff,
+            #f2fbff
+        ) !important;
+
+    border-right:
+        3px solid
+        rgba(0,191,174,.18) !important;
+
+    box-shadow:
+        8px 0 35px
+        rgba(50,90,120,.12) !important;
+}
+
+
+/* عنوان */
+
+.brand-title {
+
+    color: #15233a !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00a99a,
+            #6940ff,
+            #e32cff
+        );
+
+    -webkit-background-clip: text;
+    background-clip: text;
+
+    -webkit-text-fill-color:
+        transparent !important;
+}
+
+
+/* =========================================================
+   🌈 MENU
+   ========================================================= */
+
+.nav a {
+
+    color: #233044 !important;
+
+    border-radius:
+        16px !important;
+
+    margin:
+        6px 8px !important;
+
+    transition:
+        .25s ease !important;
+}
+
+
+/* حالت عادی */
+
+.nav a:hover {
+
+    color:
+        #ffffff !important;
+
+    transform:
+        translateX(-5px)
+        scale(1.02);
+
+}
+
+
+/* منوی داشبورد */
+
+.nav a:nth-child(1):hover,
+.nav a.active {
+
+    background:
+        linear-gradient(
+            100deg,
+            #00bfae,
+            #00d8c5
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(0,191,174,.28) !important;
+
+}
+
+
+/* مدارس */
+
+.nav a:nth-child(2):hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #287cff,
+            #55a5ff
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(40,124,255,.28) !important;
+
+}
+
+
+/* اعضا */
+
+.nav a:nth-child(3):hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #12b866,
+            #35d989
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(18,184,102,.28) !important;
+
+}
+
+
+/* کتاب */
+
+.nav a:nth-child(4):hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #ff7a00,
+            #ffad32
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(255,122,0,.30) !important;
+
+}
+
+
+/* امانت */
+
+.nav a:nth-child(5):hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #6940ff,
+            #9d6aff
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(105,64,255,.30) !important;
+
+}
+
+
+/* Excel */
+
+.nav a:nth-child(6):hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #e6a900,
+            #ffd447
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(230,169,0,.30) !important;
+
+}
+
+
+/* خروج */
+
+.nav a.logout:hover {
+
+    background:
+        linear-gradient(
+            100deg,
+            #ef3f55,
+            #ff6b7d
+        ) !important;
+
+    box-shadow:
+        0 10px 28px
+        rgba(239,63,85,.30) !important;
+
+}
+
+
+/* =========================================================
+   🧊 ICON BOXES
+   ========================================================= */
+
+.sidebar .nav-icon {
+
+    width: 46px !important;
+    height: 46px !important;
+
+    border-radius:
+        14px !important;
+
+    background:
+        #ffffff !important;
+
+    border:
+        2px solid
+        rgba(30,50,80,.08) !important;
+
+    box-shadow:
+        0 6px 16px
+        rgba(30,60,90,.12) !important;
+
+}
+
+
+.sidebar a:hover .nav-icon {
+
+    transform:
+        scale(1.08)
+        rotate(-3deg);
+
+    background:
+        rgba(255,255,255,.95) !important;
+
+}
+
+
+/* آیکون واقعی */
+
+.sidebar .nav-icon img {
+
+    width:
+        36px !important;
+
+    height:
+        36px !important;
+
+    filter:
+        none !important;
+}
+
+
+/* =========================================================
+   🪟 TOPBAR
+   ========================================================= */
+
+.topbar {
+
+    background:
+        rgba(255,255,255,.90) !important;
+
+    border:
+        2px solid
+        rgba(0,191,174,.12) !important;
+
+    border-radius:
+        24px !important;
+
+    box-shadow:
+        0 18px 50px
+        rgba(55,80,110,.13) !important;
+
+    backdrop-filter:
+        blur(18px);
+}
+
+
+/* عنوان */
+
+.welcome h1 {
+
+    background:
+        linear-gradient(
+            90deg,
+            #00a99a,
+            #5141ff,
+            #d42cff
+        );
+
+    -webkit-background-clip:
+        text;
+
+    background-clip:
+        text;
+
+    -webkit-text-fill-color:
+        transparent !important;
+
+}
+
+
+/* متن */
+
+.welcome p {
+
+    color:
+        #65738a !important;
+
+    opacity:
+        1 !important;
+
+}
+
+
+/* =========================================================
+   👤 ADMIN
+   ========================================================= */
+
+.admin-badge {
+
+    background:
+        linear-gradient(
+            135deg,
+            #e8fffb,
+            #f0eaff
+        ) !important;
+
+    border:
+        2px solid
+        rgba(105,64,255,.18) !important;
+
+    color:
+        #26344b !important;
+
+    box-shadow:
+        0 10px 30px
+        rgba(105,64,255,.12) !important;
+}
+
+
+.admin-badge img {
+
+    width:
+        44px !important;
+
+    height:
+        44px !important;
+
+    filter:
+        none !important;
+
+}
+
+
+/* =========================================================
+   💎 STAT CARDS
+   ========================================================= */
+
+.stat {
+
+    background:
+        rgba(255,255,255,.94) !important;
+
+    border:
+        2px solid
+        rgba(30,50,80,.07) !important;
+
+    border-radius:
+        23px !important;
+
+    box-shadow:
+        0 15px 40px
+        rgba(40,70,100,.12) !important;
+
+    backdrop-filter:
+        blur(12px);
+
+    transition:
+        .30s cubic-bezier(.2,.8,.2,1) !important;
+}
+
+
+.stat:hover {
+
+    transform:
+        translateY(-9px)
+        scale(1.025) !important;
+
+    box-shadow:
+        0 25px 55px
+        rgba(40,70,100,.18) !important;
+
+}
+
+
+/* =========================================================
+   🎨 STAT COLORS
+   ========================================================= */
+
+/* مدارس */
+
+.stat:nth-child(1) {
+
+    border-top:
+        6px solid
+        #287cff !important;
+}
+
+
+/* اعضا */
+
+.stat:nth-child(2) {
+
+    border-top:
+        6px solid
+        #12b866 !important;
+}
+
+
+/* مدیران */
+
+.stat:nth-child(3) {
+
+    border-top:
+        6px solid
+        #8b45ff !important;
+
+    box-shadow:
+        0 15px 45px
+        rgba(139,69,255,.16) !important;
+}
+
+
+/* امانت فعال */
+
+.stat:nth-child(4) {
+
+    border-top:
+        6px solid
+        #00bfae !important;
+}
+
+
+/* دیرکرد */
+
+.stat:nth-child(5) {
+
+    border-top:
+        6px solid
+        #ef3f55 !important;
+}
+
+
+/* برگشتی */
+
+.stat:nth-child(6) {
+
+    border-top:
+        6px solid
+        #ff7a00 !important;
+}
+
+
+/* =========================================================
+   🟣 STAT ICON
+   ========================================================= */
+
+.stat-icon {
+
+    width:
+        58px !important;
+
+    height:
+        58px !important;
+
+    border-radius:
+        17px !important;
+
+    background:
+        #ffffff !important;
+
+    border:
+        2px solid
+        rgba(30,50,80,.08) !important;
+
+    box-shadow:
+        0 8px 20px
+        rgba(30,60,90,.12) !important;
+}
+
+
+.stat-icon img {
+
+    width:
+        44px !important;
+
+    height:
+        44px !important;
+
+    filter:
+        none !important;
+}
+
+
+/* مدیران سامانه */
+
+.stat:nth-child(3) .stat-icon {
+
+    background:
+        linear-gradient(
+            135deg,
+            #eee4ff,
+            #d9c5ff
+        ) !important;
+
+    border:
+        3px solid
+        #8b45ff !important;
+
+    box-shadow:
+        0 0 25px
+        rgba(139,69,255,.28) !important;
+}
+
+
+/* =========================================================
+   🔢 NUMBERS
+   ========================================================= */
+
+.stat-value {
+
+    color:
+        #162238 !important;
+
+    -webkit-text-fill-color:
+        #162238 !important;
+
+    background:
+        none !important;
+
+    text-shadow:
+        none !important;
+}
+
+
+/* =========================================================
+   📝 TEXT
+   ========================================================= */
+
+.stat-label {
+
+    color:
+        #40516b !important;
+}
+
+
+.stat-description {
+
+    color:
+        #718096 !important;
+
+}
+
+
+/* =========================================================
+   🚨 ALERTS
+   ========================================================= */
+
+.alert {
+
+    background:
+        rgba(255,255,255,.94) !important;
+
+    color:
+        #243149 !important;
+
+    border:
+        2px solid
+        rgba(30,50,80,.07) !important;
+
+    border-radius:
+        20px !important;
+
+    box-shadow:
+        0 12px 35px
+        rgba(40,70,100,.10) !important;
+}
+
+
+/* =========================================================
+   📦 PANELS
+   ========================================================= */
+
+.panel {
+
+    background:
+        rgba(255,255,255,.94) !important;
+
+    color:
+        #243149 !important;
+
+    border:
+        2px solid
+        rgba(30,50,80,.07) !important;
+
+    border-radius:
+        24px !important;
+
+    box-shadow:
+        0 18px 50px
+        rgba(40,70,100,.12) !important;
+
+}
+
+
+/* =========================================================
+   ✨ PANEL TITLE
+   ========================================================= */
+
+.panel-title {
+
+    color:
+        #1b2940 !important;
+
+    background:
+        none !important;
+
+    -webkit-text-fill-color:
+        #1b2940 !important;
+
+}
+
+
+/* =========================================================
+   📜 TABLE
+   ========================================================= */
+
+.panel table tbody tr:hover {
+
+    background:
+        rgba(0,191,174,.06) !important;
+
+}
+
+
+/* =========================================================
+   🔘 BUTTON
+   ========================================================= */
+
+button,
+.btn {
+
+    border-radius:
+        13px !important;
+
+    transition:
+        .22s ease !important;
+}
+
+
+button:hover,
+.btn:hover {
+
+    transform:
+        translateY(-3px)
+        scale(1.015) !important;
+
+}
+
+
+/* =========================================================
+   🌈 SCROLLBAR
+   ========================================================= */
+
+::-webkit-scrollbar {
+
+    width:
+        9px;
+
+}
+
+
+::-webkit-scrollbar-track {
+
+    background:
+        #edf4f8;
+
+}
+
+
+::-webkit-scrollbar-thumb {
+
+    border-radius:
+        20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #00bfae,
+            #8b45ff
+        );
+
+}
+
+
+/* =========================================================
+   📱 MOBILE
+   ========================================================= */
+
+@media (max-width: 800px) {
+
+    .stat {
+
+        border-radius:
+            18px !important;
+
+    }
+
+    .topbar {
+
+        border-radius:
+            18px !important;
+
+    }
+
+}
+
+</style>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    /* ✨ ورود کارت‌ها */
+
+    document
+        .querySelectorAll(".stat")
+        .forEach((card, index) => {
+
+            card.style.opacity = "0";
+
+            card.style.transform =
+                "translateY(20px)";
+
+            setTimeout(() => {
+
+                card.style.transition =
+                    "opacity .45s ease, transform .45s ease";
+
+                card.style.opacity = "1";
+
+                card.style.transform =
+                    "";
+
+            }, 100 + index * 90);
+
+        });
+
+
+    /* 🪄 حرکت خیلی نرم کارت با موس */
+
+    document
+        .querySelectorAll(".stat")
+        .forEach(card => {
+
+            card.addEventListener(
+                "mousemove",
+                event => {
+
+                    const rect =
+                        card.getBoundingClientRect();
+
+                    const x =
+                        event.clientX - rect.left;
+
+                    const y =
+                        event.clientY - rect.top;
+
+                    const rx =
+                        ((y / rect.height) - .5) * -2;
+
+                    const ry =
+                        ((x / rect.width) - .5) * 2;
+
+                    card.style.transform =
+                        `translateY(-8px)
+                         perspective(900px)
+                         rotateX(${rx}deg)
+                         rotateY(${ry}deg)
+                         scale(1.015)`;
+
+                }
+            );
+
+
+            card.addEventListener(
+                "mouseleave",
+                () => {
+
+                    card.style.transform =
+                        "";
+
+                }
+            );
+
+        });
+
+});
+
+</script>
+
+
+<style id="BRIGHT-3D-LIBRARY-FINAL">
+
+/* =========================================================
+   BRIGHT 3D LIBRARY — ظاهر شاد، برجسته و سه‌بعدی
+   فقط ظاهر؛ بدون تغییر منطق سایت
+   ========================================================= */
+
+/* پس‌زمینه کلی */
+body{
+    background:
+        radial-gradient(circle at 10% 10%, rgba(0,210,255,.16), transparent 25%),
+        radial-gradient(circle at 90% 15%, rgba(170,80,255,.14), transparent 27%),
+        radial-gradient(circle at 50% 100%, rgba(0,220,170,.12), transparent 30%),
+        linear-gradient(135deg,#f7fdff 0%,#eef8ff 45%,#faf5ff 100%) !important;
+}
+
+/* ستون کناری */
+.sidebar{
+    background:
+        linear-gradient(180deg,
+            rgba(255,255,255,.98),
+            rgba(247,252,255,.98)) !important;
+
+    border-left:5px solid #36cfff !important;
+
+    box-shadow:
+        10px 0 35px rgba(0,170,220,.16),
+        inset -2px 0 0 rgba(255,255,255,.9) !important;
+}
+
+/* منوها */
+.sidebar .nav a{
+    position:relative !important;
+    margin:9px 10px !important;
+    padding:14px 15px !important;
+
+    border-radius:18px !important;
+
+    background:rgba(255,255,255,.9) !important;
+
+    border:2px solid rgba(0,0,0,.045) !important;
+
+    box-shadow:
+        0 6px 0 rgba(0,0,0,.06),
+        0 12px 24px rgba(50,90,120,.10) !important;
+
+    transform:translateY(0);
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease !important;
+}
+
+/* خط رنگی ضخیم کنار هر منو */
+.sidebar .nav a::before{
+    content:"";
+    position:absolute;
+    right:0;
+    top:9px;
+    bottom:9px;
+    width:6px;
+    border-radius:8px;
+    background:#26c6da;
+}
+
+/* داشبورد */
+.sidebar .nav a:nth-child(1)::before{
+    background:linear-gradient(#00c6ff,#0072ff);
+}
+
+/* مدارس */
+.sidebar .nav a:nth-child(2)::before{
+    background:linear-gradient(#00e676,#00a152);
+}
+
+/* اعضا */
+.sidebar .nav a:nth-child(3)::before{
+    background:linear-gradient(#a855f7,#7c3aed);
+}
+
+/* کتاب ها */
+.sidebar .nav a:nth-child(4)::before{
+    background:linear-gradient(#ffb300,#ff6d00);
+}
+
+/* امانت ها */
+.sidebar .nav a:nth-child(5)::before{
+    background:linear-gradient(#ec4899,#9333ea);
+}
+
+/* Excel */
+.sidebar .nav a:nth-child(6)::before{
+    background:linear-gradient(#ffe600,#ff9800);
+}
+
+/* خروج */
+.sidebar .logout::before{
+    background:linear-gradient(#ff5252,#d50000) !important;
+}
+
+/* حرکت سه بعدی منو */
+.sidebar .nav a:hover{
+    transform:
+        translateY(-4px)
+        translateX(-3px)
+        perspective(600px)
+        rotateX(2deg) !important;
+
+    filter:saturate(1.15) !important;
+
+    box-shadow:
+        0 9px 0 rgba(0,0,0,.07),
+        0 18px 32px rgba(40,100,140,.18) !important;
+}
+
+/* آیکون های منو */
+.sidebar .nav-icon{
+    width:44px !important;
+    height:44px !important;
+
+    border-radius:14px !important;
+
+    background:#ffffff !important;
+
+    box-shadow:
+        0 5px 0 rgba(0,0,0,.07),
+        0 8px 18px rgba(40,100,130,.14) !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+}
+
+/* هدر */
+.topbar{
+    background:rgba(255,255,255,.88) !important;
+
+    border:2px solid rgba(255,255,255,.95) !important;
+
+    border-radius:26px !important;
+
+    box-shadow:
+        0 10px 0 rgba(0,150,190,.07),
+        0 20px 45px rgba(50,100,130,.13) !important;
+
+    backdrop-filter:blur(18px) !important;
+}
+
+/* عنوان */
+.welcome h1{
+    color:#172b4d !important;
+    text-shadow:0 3px 10px rgba(0,120,180,.12) !important;
+}
+
+/* کارت های آمار */
+.stat{
+    position:relative !important;
+    overflow:hidden !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255,255,255,.98),
+            rgba(248,252,255,.94)
+        ) !important;
+
+    border:2px solid rgba(255,255,255,.95) !important;
+
+    border-radius:25px !important;
+
+    box-shadow:
+        0 7px 0 rgba(30,80,110,.07),
+        0 18px 35px rgba(40,100,130,.14),
+        inset 0 1px 0 white !important;
+
+    transform:translateY(0);
+    transition:transform .25s ease,box-shadow .25s ease !important;
+}
+
+/* نوار ضخیم بالای کارت */
+.stat::before{
+    content:"";
+    position:absolute;
+    left:0;
+    right:0;
+    top:0;
+    height:7px;
+    background:linear-gradient(90deg,#00c6ff,#7c3aed,#00e5a0);
+}
+
+/* نور تزئینی */
+.stat::after{
+    content:"";
+    position:absolute;
+    width:110px;
+    height:110px;
+    left:-45px;
+    bottom:-55px;
+
+    border-radius:50%;
+
+    background:rgba(0,200,255,.10);
+
+    filter:blur(3px);
+}
+
+/* Hover سه بعدی کارت */
+.stat:hover{
+    transform:
+        translateY(-8px)
+        perspective(700px)
+        rotateX(2deg)
+        rotateY(-2deg) !important;
+
+    box-shadow:
+        0 10px 0 rgba(30,80,110,.08),
+        0 25px 50px rgba(40,100,140,.20),
+        inset 0 1px 0 white !important;
+}
+
+/* رنگ کارت‌ها */
+.stat:nth-child(1)::before{
+    background:linear-gradient(90deg,#00c6ff,#0072ff);
+}
+
+.stat:nth-child(2)::before{
+    background:linear-gradient(90deg,#00e676,#00a152);
+}
+
+.stat:nth-child(3)::before{
+    background:linear-gradient(90deg,#a855f7,#7c3aed);
+}
+
+.stat:nth-child(4)::before{
+    background:linear-gradient(90deg,#00e5ff,#00a8cc);
+}
+
+.stat:nth-child(5)::before{
+    background:linear-gradient(90deg,#ff5252,#d50000);
+}
+
+.stat:nth-child(6)::before{
+    background:linear-gradient(90deg,#ffb300,#ff6d00);
+}
+
+/* عددهای آماری */
+.stat-value{
+    color:#162b4d !important;
+    text-shadow:0 3px 12px rgba(0,100,160,.13) !important;
+}
+
+/* آیکون آماری */
+.stat-icon{
+    border-radius:17px !important;
+
+    background:#ffffff !important;
+
+    box-shadow:
+        0 6px 0 rgba(0,0,0,.055),
+        0 10px 22px rgba(30,100,130,.15) !important;
+
+    transform:translateZ(8px) !important;
+}
+
+/* =========================================================
+   سامانه فعال است
+   ========================================================= */
+
+.system{
+    position:relative !important;
+    overflow:hidden !important;
+
+    margin-top:25px !important;
+    padding:24px 28px !important;
+
+    min-height:90px !important;
+
+    display:flex !important;
+    align-items:center !important;
+
+    border-radius:25px !important;
+
+    /* پس زمینه شاد و زنده */
+    background:
+        radial-gradient(circle at 15% 50%,rgba(0,255,190,.32),transparent 28%),
+        radial-gradient(circle at 85% 20%,rgba(130,80,255,.25),transparent 30%),
+        linear-gradient(
+            120deg,
+            #e8fff8,
+            #eaf9ff 45%,
+            #f4ecff
+        ) !important;
+
+    border:3px solid rgba(0,205,180,.28) !important;
+
+    box-shadow:
+        0 8px 0 rgba(0,150,140,.08),
+        0 20px 45px rgba(40,120,140,.16),
+        inset 0 2px 0 rgba(255,255,255,.95) !important;
+
+    transform:translateZ(0);
+}
+
+/* نور متحرک روی سامانه */
+.system::before{
+    content:"";
+    position:absolute;
+
+    top:-100%;
+    left:-30%;
+
+    width:45%;
+    height:300%;
+
+    background:linear-gradient(
+        90deg,
+        transparent,
+        rgba(255,255,255,.75),
+        transparent
+    );
+
+    transform:rotate(20deg);
+
+    animation:systemShine 4s linear infinite;
+
+    pointer-events:none;
+}
+
+@keyframes systemShine{
+    0%{
+        left:-45%;
+    }
+    100%{
+        left:125%;
+    }
+}
+
+/* نقطه آنلاین */
+.system .online{
+    position:relative !important;
+
+    width:22px !important;
+    height:22px !important;
+
+    min-width:22px !important;
+
+    margin-left:18px !important;
+
+    border-radius:50% !important;
+
+    background:#00e676 !important;
+
+    border:4px solid white !important;
+
+    box-shadow:
+        0 0 0 5px rgba(0,230,118,.16),
+        0 0 22px rgba(0,230,118,.75),
+        0 5px 12px rgba(0,120,80,.20) !important;
+
+    animation:onlinePulse 1.8s ease-in-out infinite !important;
+}
+
+@keyframes onlinePulse{
+    0%,100%{
+        transform:scale(1);
+        box-shadow:
+            0 0 0 5px rgba(0,230,118,.15),
+            0 0 18px rgba(0,230,118,.65),
+            0 5px 12px rgba(0,120,80,.18);
+    }
+
+    50%{
+        transform:scale(1.13);
+        box-shadow:
+            0 0 0 10px rgba(0,230,118,.05),
+            0 0 32px rgba(0,230,118,.9),
+            0 7px 15px rgba(0,120,80,.22);
+    }
+}
+
+/* عنوان سامانه */
+.system-title{
+    font-size:1.15rem !important;
+    font-weight:900 !important;
+
+    color:#087f66 !important;
+
+    text-shadow:
+        0 2px 8px rgba(0,160,120,.14) !important;
+}
+
+/* توضیح سامانه */
+.system-text{
+    margin-top:6px !important;
+
+    color:#36566a !important;
+
+    font-weight:600 !important;
+}
+
+/* پنل های اصلی */
+.card,
+.panel,
+.section{
+    border-radius:24px !important;
+
+    background:rgba(255,255,255,.9) !important;
+
+    border:2px solid rgba(255,255,255,.95) !important;
+
+    box-shadow:
+        0 7px 0 rgba(30,80,110,.06),
+        0 18px 38px rgba(50,100,130,.12) !important;
+}
+
+/* اسکرول بار شاد */
+::-webkit-scrollbar{
+    width:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:#eaf7fb;
+}
+
+::-webkit-scrollbar-thumb{
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            180deg,
+            #00c6ff,
+            #7c3aed,
+            #00e5a0
+        );
+}
+
+/* حرکت خیلی نرم کل کارت ها */
+.stat,
+.system,
+.topbar{
+    animation:cardFloat .7s ease both;
+}
+
+@keyframes cardFloat{
+    from{
+        opacity:0;
+        transform:translateY(12px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+</style>
+
+
+<style id="FINAL-UI-BUG-FIX">
+
+/* =====================================================
+   FINAL UI FIX
+   اسکرول + منوی سه خط + موبایل + جلوگیری از بیرون‌زدگی
+   ===================================================== */
+
+/* صفحه اصلی */
+html,
+body{
+    width:100%;
+    max-width:100%;
+    overflow-x:hidden !important;
+}
+
+body{
+    min-height:100vh;
+    -webkit-overflow-scrolling:touch;
+}
+
+/* =====================================================
+   SIDEBAR
+   ===================================================== */
+
+.sidebar{
+    overflow-x:hidden !important;
+    overflow-y:auto !important;
+
+    max-height:100vh !important;
+
+    scrollbar-width:thin;
+    overscroll-behavior:contain;
+
+    -webkit-overflow-scrolling:touch;
+}
+
+/* محتوای داخل سایدبار */
+.sidebar > *{
+    max-width:100%;
+}
+
+/* منو */
+.sidebar .nav{
+    overflow:visible !important;
+}
+
+/* جلوگیری از بریدن منوها */
+.sidebar .nav a{
+    box-sizing:border-box !important;
+    max-width:calc(100% - 20px) !important;
+}
+
+/* =====================================================
+   دکمه سه خط / HAMBURGER
+   ===================================================== */
+
+.hamburger,
+.menu-toggle,
+.sidebar-toggle,
+.mobile-menu-toggle,
+#menuToggle,
+#sidebarToggle{
+    position:relative !important;
+
+    z-index:9999 !important;
+
+    width:48px !important;
+    height:48px !important;
+
+    min-width:48px !important;
+    min-height:48px !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    border-radius:15px !important;
+
+    cursor:pointer !important;
+
+    touch-action:manipulation !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #eafaff
+        ) !important;
+
+    border:2px solid rgba(0,190,220,.25) !important;
+
+    box-shadow:
+        0 5px 0 rgba(0,130,170,.08),
+        0 10px 22px rgba(0,130,180,.16) !important;
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease !important;
+}
+
+/* سه خط */
+.hamburger span,
+.menu-toggle span,
+.sidebar-toggle span,
+.mobile-menu-toggle span,
+#menuToggle span,
+#sidebarToggle span{
+    display:block !important;
+
+    width:24px !important;
+    height:3px !important;
+
+    margin:3px 0 !important;
+
+    border-radius:10px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00b8ff,
+            #7c3aed
+        ) !important;
+
+    box-shadow:
+        0 2px 5px rgba(80,70,200,.25) !important;
+
+    transition:
+        transform .2s ease,
+        opacity .2s ease !important;
+}
+
+/* هاور */
+.hamburger:hover,
+.menu-toggle:hover,
+.sidebar-toggle:hover,
+.mobile-menu-toggle:hover,
+#menuToggle:hover,
+#sidebarToggle:hover{
+    transform:translateY(-3px) !important;
+
+    box-shadow:
+        0 7px 0 rgba(0,130,170,.08),
+        0 15px 28px rgba(0,130,180,.23) !important;
+}
+
+/* کلیک */
+.hamburger:active,
+.menu-toggle:active,
+.sidebar-toggle:active,
+.mobile-menu-toggle:active,
+#menuToggle:active,
+#sidebarToggle:active{
+    transform:translateY(2px) scale(.97) !important;
+}
+
+/* =====================================================
+   اگر سه خط داخل یک BUTTON باشد
+   ===================================================== */
+
+button.hamburger,
+button.menu-toggle,
+button.sidebar-toggle,
+button.mobile-menu-toggle{
+    appearance:none !important;
+    -webkit-appearance:none !important;
+
+    padding:0 !important;
+}
+
+/* =====================================================
+   MAIN CONTENT
+   ===================================================== */
+
+.layout{
+    width:100% !important;
+    max-width:100% !important;
+
+    box-sizing:border-box !important;
+}
+
+main{
+    min-width:0 !important;
+    max-width:100% !important;
+    box-sizing:border-box !important;
+}
+
+/* =====================================================
+   کارت‌ها
+   ===================================================== */
+
+.stats{
+    width:100% !important;
+    max-width:100% !important;
+
+    box-sizing:border-box !important;
+}
+
+.stat,
+.system,
+.topbar{
+    box-sizing:border-box !important;
+    max-width:100% !important;
+}
+
+/* =====================================================
+   SYSTEM CARD
+   ===================================================== */
+
+.system{
+    overflow:hidden !important;
+
+    isolation:isolate;
+
+    transform:none !important;
+}
+
+/* جلوگیری از خراب شدن انیمیشن نور */
+.system::before{
+    pointer-events:none !important;
+}
+
+/* متن */
+.system > div{
+    min-width:0 !important;
+}
+
+.system-title,
+.system-text{
+    overflow-wrap:anywhere !important;
+}
+
+/* =====================================================
+   موبایل
+   ===================================================== */
+
+@media (max-width:800px){
+
+    .layout{
+        display:block !important;
+    }
+
+    .sidebar{
+        max-height:calc(100vh - 10px) !important;
+    }
+
+    .topbar{
+        margin:10px !important;
+        border-radius:20px !important;
+    }
+
+    .stats{
+        grid-template-columns:1fr !important;
+        gap:14px !important;
+    }
+
+    .stat{
+        width:100% !important;
+    }
+
+    .system{
+        margin:16px 10px !important;
+        padding:18px !important;
+    }
+
+    .system .online{
+        margin-left:12px !important;
+        flex-shrink:0 !important;
+    }
+}
+
+/* =====================================================
+   موبایل خیلی کوچک
+   ===================================================== */
+
+@media (max-width:480px){
+
+    .sidebar .nav a{
+        margin:7px 8px !important;
+        padding:12px !important;
+    }
+
+    .sidebar .nav-icon{
+        width:40px !important;
+        height:40px !important;
+        flex-shrink:0 !important;
+    }
+
+    .system{
+        border-width:2px !important;
+        border-radius:20px !important;
+    }
+
+    .system-title{
+        font-size:1rem !important;
+    }
+
+    .system-text{
+        font-size:.82rem !important;
+    }
+}
+
+/* =====================================================
+   جلوگیری از اسکرول افقی ناخواسته
+   ===================================================== */
+
+img,
+svg,
+video,
+canvas{
+    max-width:100%;
+}
+
+*{
+    box-sizing:border-box;
+}
+
+/* =====================================================
+   اسکرول نرم
+   ===================================================== */
+
+html{
+    scroll-behavior:smooth;
+}
+
+/* =====================================================
+   اسکرول بار سایدبار
+   ===================================================== */
+
+.sidebar::-webkit-scrollbar{
+    width:7px;
+}
+
+.sidebar::-webkit-scrollbar-track{
+    background:rgba(220,245,250,.7);
+    border-radius:20px;
+}
+
+.sidebar::-webkit-scrollbar-thumb{
+    background:
+        linear-gradient(
+            180deg,
+            #00c6ff,
+            #7c3aed,
+            #00e5a0
+        );
+
+    border-radius:20px;
+}
+
+/* =====================================================
+   جلوگیری از انتخاب تصادفی هنگام لمس سه خط
+   ===================================================== */
+
+.hamburger,
+.menu-toggle,
+.sidebar-toggle,
+.mobile-menu-toggle,
+#menuToggle,
+#sidebarToggle{
+    user-select:none !important;
+    -webkit-user-select:none !important;
+}
+
+</style>
+
+
+<style id="FINAL-HAMBURGER-FIX">
+
+/* ===== دکمه واقعی منوی سه خط ===== */
+
+#menuToggle.menu-toggle{
+    width:50px !important;
+    height:50px !important;
+
+    min-width:50px !important;
+    min-height:50px !important;
+
+    padding:0 !important;
+    margin:0 !important;
+
+    display:flex !important;
+    align-items:center !important;
+    justify-content:center !important;
+
+    position:relative !important;
+    z-index:99999 !important;
+
+    border:2px solid rgba(0,190,220,.28) !important;
+    border-radius:16px !important;
+
+    background:
+        linear-gradient(
+            145deg,
+            #ffffff,
+            #e9fbff
+        ) !important;
+
+    box-shadow:
+        0 5px 0 rgba(0,130,170,.09),
+        0 10px 25px rgba(0,150,200,.18) !important;
+
+    cursor:pointer !important;
+    touch-action:manipulation !important;
+
+    overflow:hidden !important;
+}
+
+/* کانتینر واقعی سه خط */
+#menuToggle .menu-toggle-lines{
+    width:27px !important;
+    height:22px !important;
+
+    display:flex !important;
+
+    flex-direction:column !important;
+
+    align-items:center !important;
+    justify-content:space-between !important;
+
+    gap:0 !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    background:transparent !important;
+
+    box-shadow:none !important;
+
+    transform:none !important;
+}
+
+/* فقط سه خط واقعی */
+#menuToggle .menu-toggle-lines > span{
+    display:block !important;
+
+    width:27px !important;
+    height:3px !important;
+
+    min-width:27px !important;
+    min-height:3px !important;
+
+    margin:0 !important;
+    padding:0 !important;
+
+    border-radius:20px !important;
+
+    background:
+        linear-gradient(
+            90deg,
+            #00b8ff,
+            #7c3aed
+        ) !important;
+
+    box-shadow:
+        0 2px 6px rgba(90,60,200,.25) !important;
+
+    opacity:1 !important;
+
+    transform-origin:center !important;
+
+    transition:
+        transform .22s ease,
+        opacity .18s ease !important;
+}
+
+/* حالت باز */
+.layout.menu-open #menuToggle .menu-toggle-lines > span:nth-child(1){
+    transform:translateY(9.5px) rotate(45deg) !important;
+}
+
+.layout.menu-open #menuToggle .menu-toggle-lines > span:nth-child(2){
+    opacity:0 !important;
+    transform:scaleX(.2) !important;
+}
+
+.layout.menu-open #menuToggle .menu-toggle-lines > span:nth-child(3){
+    transform:translateY(-9.5px) rotate(-45deg) !important;
+}
+
+/* هاور */
+#menuToggle.menu-toggle:hover{
+    transform:translateY(-3px) !important;
+
+    box-shadow:
+        0 8px 0 rgba(0,130,170,.08),
+        0 17px 30px rgba(0,150,210,.24) !important;
+}
+
+/* کلیک */
+#menuToggle.menu-toggle:active{
+    transform:translateY(1px) scale(.97) !important;
+}
+
+/* جلوگیری از اسکرول/تغییر موقعیت بد هنگام لمس */
+#menuToggle,
+#menuToggle .menu-toggle-lines,
+#menuToggle .menu-toggle-lines > span{
+    user-select:none !important;
+    -webkit-user-select:none !important;
+    -webkit-tap-highlight-color:transparent !important;
+}
+
+/* ===== سایدبار هنگام اسکرول ===== */
+
+.sidebar{
+    overscroll-behavior-y:contain !important;
+    -webkit-overflow-scrolling:touch !important;
+}
+
+/* وقتی منو باز است، خود دکمه ثابت و قابل لمس بماند */
+.layout.menu-open #menuToggle{
+    z-index:100000 !important;
+}
+
+/* موبایل */
+@media(max-width:800px){
+
+    #menuToggle.menu-toggle{
+        width:48px !important;
+        height:48px !important;
+        min-width:48px !important;
+        min-height:48px !important;
+    }
+
+    #menuToggle .menu-toggle-lines{
+        width:25px !important;
+        height:21px !important;
+    }
+
+    #menuToggle .menu-toggle-lines > span{
+        width:25px !important;
+        min-width:25px !important;
+    }
+}
+
+</style>
+
+<style id="FINAL-ADMINS-ICON-FIX">
+/* ===== مدیران سامانه — آیکون و پس‌زمینه ===== */
+
+.stat-card.admins .stat-icon,
+.stat-card:has(img[src*="admins.svg"]) .stat-icon {
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    min-height: 68px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    border-radius: 20px !important;
+
+    background: linear-gradient(
+        145deg,
+        #ede9fe 0%,
+        #ddd6fe 45%,
+        #c4b5fd 100%
+    ) !important;
+
+    border: 3px solid #8b5cf6 !important;
+
+    box-shadow:
+        0 8px 0 #7c3aed,
+        0 14px 24px rgba(124, 58, 237, .25),
+        inset 0 2px 5px rgba(255,255,255,.9) !important;
+
+    overflow: hidden !important;
+}
+
+.stat-card.admins .stat-icon img,
+.stat-card:has(img[src*="admins.svg"]) .stat-icon img {
+    width: 40px !important;
+    height: 40px !important;
+
+    object-fit: contain !important;
+
+    filter: none !important;
+    -webkit-filter: none !important;
+
+    opacity: 1 !important;
+}
+
+.stat-card.admins:hover .stat-icon,
+.stat-card:has(img[src*="admins.svg"]):hover .stat-icon {
+    transform: translateY(-4px) rotate(-2deg) !important;
+    box-shadow:
+        0 10px 0 #7c3aed,
+        0 18px 30px rgba(124, 58, 237, .30),
+        inset 0 2px 6px rgba(255,255,255,.95) !important;
+}
+</style>
+<style id="REAL-ADMINS-ICON-FIX">
+
+/* ===== کارت مدیران سامانه ===== */
+
+.stat:nth-child(3) .stat-icon {
+    width: 68px !important;
+    height: 68px !important;
+    min-width: 68px !important;
+    min-height: 68px !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    padding: 0 !important;
+    border-radius: 20px !important;
+
+    background: linear-gradient(
+        145deg,
+        #f3e8ff 0%,
+        #e9d5ff 50%,
+        #d8b4fe 100%
+    ) !important;
+
+    border: 3px solid #9333ea !important;
+
+    box-shadow:
+        0 7px 0 #7e22ce,
+        0 12px 24px rgba(126, 34, 206, .28),
+        inset 0 3px 7px rgba(255,255,255,.95) !important;
+}
+
+.stat:nth-child(3) .stat-icon img {
+    width: 42px !important;
+    height: 42px !important;
+
+    max-width: 42px !important;
+    max-height: 42px !important;
+
+    object-fit: contain !important;
+
+    opacity: 1 !important;
+
+    filter: none !important;
+    -webkit-filter: none !important;
+}
+
+.stat:nth-child(3):hover .stat-icon {
+    transform: translateY(-3px) !important;
+
+    box-shadow:
+        0 9px 0 #7e22ce,
+        0 17px 30px rgba(126, 34, 206, .34),
+        inset 0 3px 8px rgba(255,255,255,.98) !important;
+}
+
+</style>

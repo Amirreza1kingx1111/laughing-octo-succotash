@@ -1,0 +1,277 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>افزودن مدرسه | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+
+            font-family: Vazirmatn, sans-serif;
+            color: #edfafa;
+
+            background:
+                radial-gradient(
+                    circle at 85% 10%,
+                    rgba(14, 112, 122, .30),
+                    transparent 35%
+                ),
+                radial-gradient(
+                    circle at 10% 90%,
+                    rgba(8, 77, 85, .20),
+                    transparent 30%
+                ),
+                #071417;
+        }
+
+        .box {
+            width: min(560px, 100%);
+            padding: 34px;
+
+            border-radius: 24px;
+            border: 1px solid rgba(73, 144, 151, .28);
+
+            background: rgba(10, 29, 33, .95);
+
+            box-shadow:
+                0 30px 90px rgba(0, 0, 0, .35),
+                inset 0 1px 0 rgba(255, 255, 255, .03);
+        }
+
+        .header {
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            margin: 0 0 9px;
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .description {
+            margin: 0;
+            color: #9db8bb;
+            line-height: 1.8;
+            font-size: 14px;
+        }
+
+        .field {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 9px;
+            color: #c4dfe1;
+            font-size: 14px;
+            font-weight: 800;
+        }
+
+        input {
+            width: 100%;
+            min-height: 50px;
+            padding: 12px 15px;
+
+            border: 1px solid #31565b;
+            border-radius: 13px;
+
+            outline: none;
+
+            background: #081a1e;
+            color: #ffffff;
+
+            font-family: Vazirmatn, sans-serif;
+            font-size: 15px;
+
+            transition:
+                border-color .2s ease,
+                box-shadow .2s ease;
+        }
+
+        input:focus {
+            border-color: #1593a0;
+
+            box-shadow:
+                0 0 0 3px rgba(21, 147, 160, .12);
+        }
+
+        input::placeholder {
+            color: #607b7e;
+        }
+
+        .error {
+            margin-top: 7px;
+            color: #ff9d9d;
+            font-size: 13px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 12px;
+            margin-top: 28px;
+        }
+
+        .actions a,
+        .actions button {
+            flex: 1;
+            min-height: 50px;
+
+            border-radius: 13px;
+
+            font-family: Vazirmatn, sans-serif;
+            font-size: 14px;
+            font-weight: 800;
+
+            text-decoration: none;
+
+            cursor: pointer;
+        }
+
+        .back {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            border: 1px solid #31565b;
+            background: #0a1c20;
+            color: #c5d9da;
+        }
+
+        .submit {
+            border: 1px solid rgba(47, 181, 192, .55);
+
+            background:
+                linear-gradient(
+                    135deg,
+                    #087f8c,
+                    #0b5963
+                );
+
+            color: white;
+
+            box-shadow:
+                0 10px 28px rgba(0, 0, 0, .20);
+        }
+
+        .submit:hover {
+            filter: brightness(1.1);
+        }
+
+        a,
+        button {
+            -webkit-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
+        }
+
+        @media (max-width: 600px) {
+
+            .box {
+                padding: 24px;
+            }
+
+            h1 {
+                font-size: 24px;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="box">
+
+    <div class="header">
+        <h1>افزودن مدرسه</h1>
+
+        <p class="description">
+            اطلاعات مدرسه را ثبت کنید تا بتوانیم اعضای کتابخانه
+            را به مدرسه مربوطه متصل کنیم.
+        </p>
+    </div>
+
+
+    <form method="POST">
+
+        {{ form.hidden_tag() }}
+
+
+        <div class="field">
+
+            <label for="{{ form.name.id }}">
+                {{ form.name.label.text }}
+            </label>
+
+            {{ form.name(
+                id=form.name.id,
+                placeholder="مثلاً مدرسه ۱۳ آبان"
+            ) }}
+
+            {% for error in form.name.errors %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="field">
+
+            <label for="{{ form.code.id }}">
+                {{ form.code.label.text }}
+            </label>
+
+            {{ form.code(
+                id=form.code.id,
+                placeholder="مثلاً ۱۲۳۴۵۶۷۸"
+            ) }}
+
+            {% for error in form.code.errors %}
+                <div class="error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <div class="actions">
+
+            <a
+                class="back"
+                href="{{ url_for('admin.schools') }}"
+            >
+                بازگشت
+            </a>
+
+            {{ form.submit(class="submit") }}
+
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

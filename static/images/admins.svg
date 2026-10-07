@@ -1,0 +1,168 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128">
+
+<defs>
+
+  <linearGradient id="bg"
+                  x1="0" y1="0"
+                  x2="1" y2="1">
+
+    <stop offset="0%"
+          stop-color="#160b3d"/>
+
+    <stop offset="45%"
+          stop-color="#5520a0"/>
+
+    <stop offset="100%"
+          stop-color="#087f91"/>
+
+  </linearGradient>
+
+  <linearGradient id="main"
+                  x1="0" y1="0"
+                  x2="1" y2="1">
+
+    <stop offset="0%"
+          stop-color="#ffffff"/>
+
+    <stop offset="100%"
+          stop-color="#a7fff6"/>
+
+  </linearGradient>
+
+  <filter id="glow">
+
+    <feGaussianBlur
+      stdDeviation="3"
+      result="blur"/>
+
+    <feMerge>
+      <feMergeNode in="blur"/>
+      <feMergeNode in="SourceGraphic"/>
+    </feMerge>
+
+  </filter>
+
+</defs>
+
+
+<!-- NEON BACKGROUND -->
+
+<rect
+  width="128"
+  height="128"
+  rx="30"
+  fill="url(#bg)"
+/>
+
+
+<!-- OUTER RING -->
+
+<circle
+  cx="64"
+  cy="64"
+  r="50"
+  fill="none"
+  stroke="#55e6d5"
+  stroke-opacity=".35"
+  stroke-width="2"
+/>
+
+
+<circle
+  cx="64"
+  cy="64"
+  r="43"
+  fill="none"
+  stroke="#9b6cff"
+  stroke-opacity=".25"
+  stroke-width="1.5"
+/>
+
+
+<!-- MAIN PERSON -->
+
+<circle
+  cx="64"
+  cy="38"
+  r="16"
+  fill="url(#main)"
+  filter="url(#glow)"
+/>
+
+
+<path
+  d="M38 94c2-19 12-30 26-30s24 11 26 30z"
+  fill="#55e6d5"
+  filter="url(#glow)"
+/>
+
+
+<!-- SIDE USERS -->
+
+<circle
+  cx="31"
+  cy="53"
+  r="9"
+  fill="#ffffff"
+  fill-opacity=".8"
+/>
+
+<path
+  d="M17 91c1-13 7-21 14-21s13 8 14 21z"
+  fill="#9b6cff"
+/>
+
+
+<circle
+  cx="97"
+  cy="53"
+  r="9"
+  fill="#ffffff"
+  fill-opacity=".8"
+/>
+
+<path
+  d="M83 91c1-13 7-21 14-21s13 8 14 21z"
+  fill="#ff67c7"
+/>
+
+
+<!-- NEON NODES -->
+
+<circle
+  cx="18"
+  cy="23"
+  r="4"
+  fill="#55e6d5"
+/>
+
+<circle
+  cx="109"
+  cy="25"
+  r="5"
+  fill="#ff67c7"
+/>
+
+<circle
+  cx="108"
+  cy="105"
+  r="4"
+  fill="#ffd76a"
+/>
+
+
+<!-- CONNECTIONS -->
+
+<path
+  d="M31 53L50 45
+     M97 53L78 45
+     M31 77L48 83
+     M97 77L80 83"
+  stroke="#ffffff"
+  stroke-opacity=".25"
+  stroke-width="2"
+  stroke-linecap="round"
+/>
+
+
+</svg>

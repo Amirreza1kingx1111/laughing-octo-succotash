@@ -1,0 +1,497 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>پرونده عضو | {{ student.first_name }} {{ student.last_name }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Vazirmatn, sans-serif;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(20, 184, 166, .12), transparent 30%),
+                radial-gradient(circle at 85% 20%, rgba(14, 165, 233, .08), transparent 28%),
+                #071315;
+            color: #e7f8f5;
+        }
+
+        .page {
+            width: min(1180px, calc(100% - 28px));
+            margin: 0 auto;
+            padding: 28px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            margin-bottom: 22px;
+        }
+
+        .title-area h1 {
+            margin: 0 0 6px;
+            font-size: clamp(24px, 4vw, 34px);
+            font-weight: 900;
+        }
+
+        .title-area p {
+            margin: 0;
+            color: #91aaa6;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 17px;
+            border-radius: 13px;
+            border: 1px solid rgba(255,255,255,.08);
+            color: #eafffb;
+            text-decoration: none;
+            font-weight: 800;
+            background: rgba(255,255,255,.045);
+            transition: .2s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            background: rgba(20,184,166,.10);
+            border-color: rgba(20,184,166,.28);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #0f766e, #0d9488);
+            border-color: rgba(45,212,191,.25);
+        }
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            padding: 25px;
+            border-radius: 24px;
+            border: 1px solid rgba(94,234,212,.12);
+            background:
+                linear-gradient(135deg, rgba(13,148,136,.13), rgba(255,255,255,.025)),
+                rgba(7,19,21,.78);
+            box-shadow: 0 20px 70px rgba(0,0,0,.25);
+            margin-bottom: 18px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 180px;
+            height: 180px;
+            left: -70px;
+            top: -80px;
+            border-radius: 50%;
+            background: rgba(20,184,166,.09);
+            filter: blur(8px);
+        }
+
+        .profile {
+            position: relative;
+            z-index: 1;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+        }
+
+        .avatar {
+            width: 76px;
+            height: 76px;
+            flex: 0 0 76px;
+            display: grid;
+            place-items: center;
+            border-radius: 22px;
+            background: linear-gradient(145deg, #134e4a, #0f766e);
+            border: 1px solid rgba(94,234,212,.22);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,.08);
+            font-size: 28px;
+            font-weight: 900;
+        }
+
+        .profile h2 {
+            margin: 0 0 7px;
+            font-size: 25px;
+        }
+
+        .profile-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            min-height: 30px;
+            padding: 0 11px;
+            border-radius: 999px;
+            background: rgba(255,255,255,.045);
+            color: #a9c0bc;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .badge.active {
+            color: #8ff7d9;
+            background: rgba(16,185,129,.10);
+            border: 1px solid rgba(16,185,129,.13);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 14px;
+            margin-bottom: 18px;
+        }
+
+        .card {
+            border: 1px solid rgba(255,255,255,.07);
+            border-radius: 20px;
+            background: rgba(255,255,255,.035);
+            padding: 20px;
+            box-shadow: 0 15px 50px rgba(0,0,0,.15);
+        }
+
+        .stat-label {
+            color: #8ca7a3;
+            font-size: 13px;
+            margin-bottom: 9px;
+        }
+
+        .stat-value {
+            font-size: 30px;
+            font-weight: 900;
+        }
+
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .info {
+            padding: 15px;
+            border-radius: 15px;
+            background: rgba(255,255,255,.025);
+            border: 1px solid rgba(255,255,255,.055);
+        }
+
+        .info span {
+            display: block;
+            color: #809a96;
+            font-size: 12px;
+            margin-bottom: 6px;
+        }
+
+        .info strong {
+            font-size: 15px;
+            color: #e8f8f5;
+        }
+
+        .section-title {
+            margin: 0 0 15px;
+            font-size: 19px;
+            font-weight: 900;
+        }
+
+        .history {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 680px;
+        }
+
+        th,
+        td {
+            padding: 14px 12px;
+            text-align: right;
+            border-bottom: 1px solid rgba(255,255,255,.055);
+            white-space: nowrap;
+        }
+
+        th {
+            color: #8ca7a3;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        td {
+            color: #d9ebe8;
+            font-size: 13px;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .status.active {
+            color: #8ff7d9;
+            background: rgba(16,185,129,.10);
+        }
+
+        .status.returned {
+            color: #b7c8c5;
+            background: rgba(148,163,184,.08);
+        }
+
+        .empty {
+            padding: 35px 20px;
+            text-align: center;
+            color: #78918d;
+        }
+
+        .flash {
+            padding: 13px 15px;
+            margin-bottom: 14px;
+            border-radius: 14px;
+            background: rgba(239,68,68,.10);
+            border: 1px solid rgba(239,68,68,.16);
+            color: #fecaca;
+        }
+
+        @media (max-width: 760px) {
+            .page {
+                width: min(100% - 18px, 1180px);
+                padding-top: 18px;
+            }
+
+            .topbar {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .actions,
+            .actions .btn {
+                width: 100%;
+            }
+
+            .profile {
+                align-items: flex-start;
+            }
+
+            .avatar {
+                width: 62px;
+                height: 62px;
+                flex-basis: 62px;
+                border-radius: 18px;
+            }
+
+            .profile h2 {
+                font-size: 21px;
+            }
+
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .hero,
+            .card {
+                padding: 17px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+<main class="page">
+
+    <div class="topbar">
+        <div class="title-area">
+            <h1>پرونده عضو</h1>
+            <p>نمایش اطلاعات و سوابق ثبت‌شده عضو در سامانه</p>
+        </div>
+
+        <div class="actions">
+            <a class="btn" href="{{ url_for('admin.students') }}">
+                بازگشت به اعضا
+            </a>
+        </div>
+    </div>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% for category, message in messages %}
+            <div class="flash">{{ message }}</div>
+        {% endfor %}
+    {% endwith %}
+
+    <section class="hero">
+        <div class="profile">
+            <div class="avatar">
+                {{ student.first_name[:1] }}{{ student.last_name[:1] }}
+            </div>
+
+            <div>
+                <h2>
+                    {{ student.first_name }}
+                    {{ student.last_name }}
+                </h2>
+
+                <div class="profile-meta">
+                    <span class="badge active">عضو فعال</span>
+                    <span class="badge">
+                        کد: {{ student.student_code }}
+                    </span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="grid">
+        <div class="card">
+            <div class="stat-label">تعداد کل امانت‌ها</div>
+            <div class="stat-value">{{ loan_count }}</div>
+        </div>
+
+        <div class="card">
+            <div class="stat-label">امانت‌های فعال</div>
+            <div class="stat-value">{{ active_loan_count }}</div>
+        </div>
+
+        <div class="card">
+            <div class="stat-label">وضعیت عضویت</div>
+            <div class="stat-value" style="font-size:21px;">
+                فعال
+            </div>
+        </div>
+    </section>
+
+    <section class="card" style="margin-bottom:18px;">
+        <h3 class="section-title">اطلاعات عضو</h3>
+
+        <div class="info-grid">
+            <div class="info">
+                <span>نام</span>
+                <strong>{{ student.first_name }}</strong>
+            </div>
+
+            <div class="info">
+                <span>نام خانوادگی</span>
+                <strong>{{ student.last_name }}</strong>
+            </div>
+
+            <div class="info">
+                <span>کد دانش‌آموزی</span>
+                <strong>{{ student.student_code }}</strong>
+            </div>
+
+            <div class="info">
+                <span>مدرسه</span>
+                <strong>{{ student.school.name }}</strong>
+            </div>
+
+            <div class="info">
+                <span>پایه</span>
+                <strong>{{ student.grade }}</strong>
+            </div>
+
+            <div class="info">
+                <span>کلاس</span>
+                <strong>{{ student.class_name }}</strong>
+            </div>
+        </div>
+    </section>
+
+    <section class="card">
+        <h3 class="section-title">سوابق امانت</h3>
+
+        {% if loan_history %}
+            <div class="history">
+                <table>
+                    <thead>
+                    <tr>
+                        <th>شناسه</th>
+                        <th>کتاب</th>
+                        <th>تاریخ امانت</th>
+                        <th>موعد بازگشت</th>
+                        <th>تاریخ بازگشت</th>
+                        <th>وضعیت</th>
+                    </tr>
+                    </thead>
+
+                    <tbody>
+                    {% for loan in loan_history %}
+                        <tr>
+                            <td>#{{ loan.id }}</td>
+
+                            <td>
+                                {% if loan.book_id %}
+                                    کتاب #{{ loan.book_id }}
+                                {% else %}
+                                    ثبت نشده
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {{ loan.borrowed_at.strftime('%Y/%m/%d %H:%M') }}
+                            </td>
+
+                            <td>
+                                {{ loan.due_at.strftime('%Y/%m/%d %H:%M') }}
+                            </td>
+
+                            <td>
+                                {% if loan.returned_at %}
+                                    {{ loan.returned_at.strftime('%Y/%m/%d %H:%M') }}
+                                {% else %}
+                                    —
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                {% if loan.status == "active" %}
+                                    <span class="status active">فعال</span>
+                                {% else %}
+                                    <span class="status returned">
+                                        {{ loan.status }}
+                                    </span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="empty">
+                هنوز سابقه امانتی برای این عضو ثبت نشده است.
+            </div>
+        {% endif %}
+    </section>
+
+</main>
+</body>
+</html>

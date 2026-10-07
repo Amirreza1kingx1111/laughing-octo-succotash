@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>کتابخانه ۱۳ آبان | سامانه ثبت کتاب</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #082f35;
+            --navy-2: #0d454d;
+            --teal: #12a8a5;
+            --teal-dark: #087d7f;
+            --teal-soft: #e7f8f7;
+            --text: #14252a;
+            --muted: #718087;
+            --border: #e4ecef;
+            --white: #ffffff;
+            --bg: #f3f7f8;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            margin: 0;
+            color: var(--text);
+            background: var(--bg);
+            font-family: Vazirmatn, Tahoma, Arial, sans-serif;
+            overflow-x: hidden;
+        }
+
+        /* ==============================
+           HEADER
+           ============================== */
+
+        .topbar {
+            position: relative;
+            background:
+                linear-gradient(
+                    120deg,
+                    var(--navy),
+                    var(--navy-2)
+                );
+            color: white;
+            border-bottom: 3px solid var(--teal);
+        }
+
+        .topbar-inner {
+            width: min(1180px, calc(100% - 32px));
+            margin: auto;
+            min-height: 78px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .brand-icon {
+            width: 48px;
+            height: 48px;
+            display: grid;
+            place-items: center;
+            border-radius: 14px;
+            background: var(--teal);
+            box-shadow:
+                0 8px 20px rgba(18,168,165,.22);
+            font-size: 23px;
+        }
+
+        .brand h1 {
+            margin: 0;
+            font-size: 17px;
+            font-weight: 800;
+        }
+
+        .brand span {
+            display: block;
+            margin-top: 3px;
+            color: #b9dfe1;
+            font-size: 11px;
+        }
+
+        .admin-button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 0 18px;
+            color: white;
+            text-decoration: none;
+            border: 1px solid rgba(255,255,255,.18);
+            border-radius: 12px;
+            background: rgba(255,255,255,.07);
+            transition:
+                transform .2s ease,
+                background .2s ease,
+                border-color .2s ease;
+        }
+
+        .admin-button:hover {
+            transform: translateY(-2px);
+            background: rgba(255,255,255,.13);
+            border-color: rgba(255,255,255,.3);
+        }
+
+        /* ==============================
+           MAIN
+           ============================== */
+
+        .container {
+            width: min(1180px, calc(100% - 32px));
+            margin: auto;
+            padding: 32px 0 55px;
+        }
+
+        /* ==============================
+           HERO
+           ============================== */
+
+        .hero {
+            position: relative;
+            overflow: hidden;
+            min-height: 390px;
+            display: flex;
+            align-items: center;
+            padding: 55px;
+            border-radius: 30px;
+            color: white;
+            background:
+                linear-gradient(
+                    125deg,
+                    #072f36 0%,
+                    #0d4c54 55%,
+                    #087d7f 100%
+                );
+            box-shadow:
+                0 22px 55px rgba(8,47,53,.20);
+            animation: heroEnter .55s ease-out both;
+        }
+
+        .hero::before {
+            content: "";
+            position: absolute;
+            width: 390px;
+            height: 390px;
+            border: 1px solid rgba(255,255,255,.10);
+            border-radius: 50%;
+            left: -170px;
+            top: -100px;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            width: 220px;
+            height: 220px;
+            border-radius: 50%;
+            right: -80px;
+            bottom: -110px;
+            background: rgba(18,168,165,.18);
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 760px;
+        }
+
+        .hero-label {
+            display: inline-flex;
+            padding: 7px 13px;
+            border-radius: 30px;
+            background: rgba(255,255,255,.10);
+            border: 1px solid rgba(255,255,255,.10);
+            color: #bfe8e9;
+            font-size: 12px;
+        }
+
+        .hero h2 {
+            margin: 18px 0 12px;
+            font-size: clamp(30px, 5vw, 46px);
+            line-height: 1.45;
+            letter-spacing: -.5px;
+        }
+
+        .hero p {
+            max-width: 650px;
+            margin: 0;
+            color: #d5eeee;
+            line-height: 2;
+            font-size: 14px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 29px;
+        }
+
+        .hero-button {
+            min-height: 47px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 22px;
+            border-radius: 13px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 700;
+            transition:
+                transform .2s ease,
+                box-shadow .2s ease;
+        }
+
+        .hero-button:hover {
+            transform: translateY(-3px);
+        }
+
+        .primary {
+            background: var(--teal);
+            color: white;
+            box-shadow:
+                0 9px 24px rgba(0,0,0,.15);
+        }
+
+        .primary:hover {
+            box-shadow:
+                0 13px 30px rgba(0,0,0,.20);
+        }
+
+        .secondary {
+            background: white;
+            color: var(--navy);
+        }
+
+        /* ==============================
+           SECTION
+           ============================== */
+
+        .section-title {
+            margin: 40px 0 18px;
+        }
+
+        .section-title h2 {
+            margin: 0;
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .section-title p {
+            margin: 6px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* ==============================
+           STATS
+           ============================== */
+
+        .stats {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(210px, 1fr));
+            gap: 16px;
+        }
+
+        .stat {
+            position: relative;
+            overflow: hidden;
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 23px;
+            box-shadow:
+                0 8px 26px rgba(20,40,50,.055);
+            transition:
+                transform .22s ease,
+                box-shadow .22s ease,
+                border-color .22s ease;
+            animation: cardEnter .5s ease-out both;
+        }
+
+        .stat:nth-child(2) {
+            animation-delay: .06s;
+        }
+
+        .stat:nth-child(3) {
+            animation-delay: .12s;
+        }
+
+        .stat:nth-child(4) {
+            animation-delay: .18s;
+        }
+
+        .stat::before {
+            content: "";
+            position: absolute;
+            right: 0;
+            top: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--teal);
+            transform: scaleX(.15);
+            transform-origin: right;
+            transition: transform .25s ease;
+        }
+
+        .stat:hover {
+            transform: translateY(-6px);
+            border-color: #cde5e6;
+            box-shadow:
+                0 18px 38px rgba(20,40,50,.10);
+        }
+
+        .stat:hover::before {
+            transform: scaleX(1);
+        }
+
+        .stat-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .stat-title {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .stat-icon {
+            width: 44px;
+            height: 44px;
+            display: grid;
+            place-items: center;
+            border-radius: 13px;
+            background: var(--teal-soft);
+            font-size: 19px;
+        }
+
+        .stat-number {
+            margin-top: 17px;
+            font-size: 26px;
+            font-weight: 900;
+            color: var(--navy);
+        }
+
+        /* ==============================
+           SERVICES
+           ============================== */
+
+        .services {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(230px, 1fr));
+            gap: 16px;
+        }
+
+        .service {
+            position: relative;
+            overflow: hidden;
+            background: white;
+            padding: 25px;
+            min-height: 215px;
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            box-shadow:
+                0 8px 25px rgba(20,40,50,.045);
+            transition:
+                transform .22s ease,
+                box-shadow .22s ease,
+                border-color .22s ease;
+            animation: cardEnter .55s ease-out both;
+        }
+
+        .service:nth-child(2) {
+            animation-delay: .06s;
+        }
+
+        .service:nth-child(3) {
+            animation-delay: .12s;
+        }
+
+        .service:nth-child(4) {
+            animation-delay: .18s;
+        }
+
+        .service:hover {
+            transform: translateY(-7px);
+            border-color: #cde5e6;
+            box-shadow:
+                0 20px 42px rgba(20,40,50,.10);
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            display: grid;
+            place-items: center;
+            border-radius: 15px;
+            background: var(--teal-soft);
+            font-size: 24px;
+            transition:
+                transform .22s ease;
+        }
+
+        .service:hover .service-icon {
+            transform: scale(1.08) rotate(-3deg);
+        }
+
+        .service h3 {
+            margin: 17px 0 8px;
+            font-size: 16px;
+        }
+
+        .service p {
+            margin: 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        .service a {
+            display: inline-block;
+            margin-top: 16px;
+            color: var(--teal-dark);
+            text-decoration: none;
+            font-size: 12px;
+            font-weight: 700;
+            transition:
+                transform .18s ease;
+        }
+
+        .service a:hover {
+            transform: translateX(-4px);
+        }
+
+        /* ==============================
+           FOOTER
+           ============================== */
+
+        footer {
+            margin-top: 48px;
+            padding: 28px 20px;
+            text-align: center;
+            color: #77838e;
+            border-top: 1px solid #dfe7ea;
+            font-size: 11px;
+        }
+
+        /* ==============================
+           ANIMATIONS
+           ============================== */
+
+        @keyframes heroEnter {
+            from {
+                opacity: 0;
+                transform: translateY(14px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes cardEnter {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ==============================
+           MOBILE
+           ============================== */
+
+        @media (max-width: 700px) {
+
+            .topbar-inner {
+                width: min(100% - 22px, 1180px);
+                min-height: 70px;
+            }
+
+            .brand h1 {
+                font-size: 14px;
+            }
+
+            .brand span {
+                font-size: 9px;
+            }
+
+            .brand-icon {
+                width: 42px;
+                height: 42px;
+                font-size: 20px;
+            }
+
+            .admin-button {
+                min-height: 38px;
+                padding: 0 12px;
+                font-size: 11px;
+            }
+
+            .container {
+                width: min(100% - 22px, 1180px);
+                padding-top: 20px;
+            }
+
+            .hero {
+                min-height: 420px;
+                padding: 34px 23px;
+                border-radius: 23px;
+            }
+
+            .hero h2 {
+                font-size: 30px;
+            }
+
+            .hero p {
+                font-size: 13px;
+            }
+
+            .hero-button {
+                width: 100%;
+            }
+
+            .stats,
+            .services {
+                grid-template-columns: 1fr;
+            }
+
+            .stat:hover,
+            .service:hover {
+                transform: translateY(-3px);
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation: none !important;
+                transition: none !important;
+            }
+
+        }
+
+    </style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+    <div class="topbar-inner">
+
+        <div class="brand">
+
+            <div class="brand-icon">📚</div>
+
+            <div>
+                <h1>کتابخانه ۱۳ آبان</h1>
+
+                <span>
+                    سامانه ثبت و مدیریت کتاب
+                </span>
+            </div>
+
+        </div>
+
+        <a
+            class="admin-button"
+            href="{{ url_for('auth.login') }}"
+        >
+            ورود مدیر
+        </a>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="hero">
+
+        <div class="hero-content">
+
+            <span class="hero-label">
+                سامانه مدیریت کتابخانه
+            </span>
+
+            <h2>
+                سامانه ثبت کتاب<br>
+                کتابخانه ۱۳ آبان
+            </h2>
+
+            <p>
+                مدیریت ساده و منظم کتاب‌ها، اعضای کتابخانه
+                و اطلاعات امانت در یک سامانه یکپارچه.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a
+                    href="{{ url_for('auth.login') }}"
+                    class="hero-button primary"
+                >
+                    ورود به سامانه
+                </a>
+
+                <a
+                    href="#services"
+                    class="hero-button secondary"
+                >
+                    مشاهده امکانات
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section>
+
+        <div class="section-title">
+
+            <h2>
+                وضعیت کتابخانه
+            </h2>
+
+            <p>
+                خلاصه‌ای از اطلاعات سامانه
+            </p>
+
+        </div>
+
+        <div class="stats">
+
+            <div class="stat">
+
+                <div class="stat-top">
+
+                    <span class="stat-title">
+                        کتاب‌های ثبت‌شده
+                    </span>
+
+                    <div class="stat-icon">
+                        📚
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-top">
+
+                    <span class="stat-title">
+                        اعضای کتابخانه
+                    </span>
+
+                    <div class="stat-icon">
+                        👥
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-top">
+
+                    <span class="stat-title">
+                        کتاب‌های امانت داده‌شده
+                    </span>
+
+                    <div class="stat-icon">
+                        📖
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    —
+                </div>
+
+            </div>
+
+
+            <div class="stat">
+
+                <div class="stat-top">
+
+                    <span class="stat-title">
+                        وضعیت سامانه
+                    </span>
+
+                    <div class="stat-icon">
+                        ✓
+                    </div>
+
+                </div>
+
+                <div class="stat-number">
+                    فعال
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <section id="services">
+
+        <div class="section-title">
+
+            <h2>
+                دسترسی سریع
+            </h2>
+
+            <p>
+                بخش‌های اصلی سامانه
+            </p>
+
+        </div>
+
+        <div class="services">
+
+            <div class="service">
+
+                <div class="service-icon">
+                    📚
+                </div>
+
+                <h3>
+                    مدیریت کتاب‌ها
+                </h3>
+
+                <p>
+                    مشاهده و مدیریت کتاب‌های ثبت‌شده
+                    در کتابخانه.
+                </p>
+
+                <a href="{{ url_for('auth.login') }}">
+                    ورود به بخش →
+                </a>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    👨‍🎓
+                </div>
+
+                <h3>
+                    اعضای کتابخانه
+                </h3>
+
+                <p>
+                    مدیریت اعضا و اطلاعات مربوط
+                    به آن‌ها.
+                </p>
+
+                <a href="{{ url_for('auth.login') }}">
+                    ورود به بخش →
+                </a>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    🔎
+                </div>
+
+                <h3>
+                    جستجوی کتاب
+                </h3>
+
+                <p>
+                    پیدا کردن سریع کتاب بر اساس
+                    اطلاعات ثبت‌شده.
+                </p>
+
+                <a href="{{ url_for('auth.login') }}">
+                    جستجو →
+                </a>
+
+            </div>
+
+
+            <div class="service">
+
+                <div class="service-icon">
+                    📊
+                </div>
+
+                <h3>
+                    گزارش‌ها
+                </h3>
+
+                <p>
+                    مشاهده آمار و گزارش‌های مدیریتی
+                    کتابخانه.
+                </p>
+
+                <a href="{{ url_for('auth.login') }}">
+                    مشاهده گزارش‌ها →
+                </a>
+
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer>
+
+    کتابخانه ۱۳ آبان
+    <br><br>
+    سامانه ثبت و مدیریت کتاب
+
+</footer>
+
+</body>
+</html>

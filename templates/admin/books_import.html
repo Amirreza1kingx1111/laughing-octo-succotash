@@ -1,0 +1,499 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>ورود کتاب‌ها از Excel | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Vazirmatn, Tahoma, sans-serif;
+            color: #edfafa;
+            background:
+                radial-gradient(
+                    circle at 85% 0%,
+                    rgba(45, 212, 191, .13),
+                    transparent 32%
+                ),
+                linear-gradient(
+                    145deg,
+                    #041417,
+                    #071f24 55%,
+                    #041214
+                );
+        }
+
+        .page {
+            width: min(900px, calc(100% - 24px));
+            margin: 0 auto;
+            padding: 30px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 22px;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 42px;
+            padding: 0 16px;
+            border-radius: 12px;
+            color: #dffaf6;
+            text-decoration: none;
+            background: rgba(255,255,255,.04);
+            border: 1px solid rgba(148,163,184,.15);
+        }
+
+        .back:hover {
+            background: rgba(255,255,255,.08);
+        }
+
+        .card {
+            padding: clamp(22px, 5vw, 38px);
+            border-radius: 24px;
+            border: 1px solid rgba(92,224,216,.14);
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(11,42,47,.95),
+                    rgba(5,25,29,.96)
+                );
+            box-shadow: 0 25px 70px rgba(0,0,0,.28);
+        }
+
+        .header {
+            margin-bottom: 28px;
+        }
+
+        .header h1 {
+            margin: 0;
+            font-size: clamp(25px, 5vw, 34px);
+            font-weight: 900;
+        }
+
+        .header p {
+            margin: 10px 0 0;
+            color: #91aaa9;
+            line-height: 2;
+            font-size: 13px;
+        }
+
+        .notice {
+            display: flex;
+            gap: 13px;
+            align-items: flex-start;
+            margin-bottom: 22px;
+            padding: 15px 16px;
+            border-radius: 15px;
+            border: 1px solid rgba(45,212,191,.12);
+            background: rgba(45,212,191,.055);
+        }
+
+        .notice-icon {
+            flex: 0 0 auto;
+            width: 34px;
+            height: 34px;
+            display: grid;
+            place-items: center;
+            border-radius: 10px;
+            background: rgba(45,212,191,.10);
+            color: #6ee7d8;
+            font-weight: 900;
+        }
+
+        .notice-text {
+            color: #a8c1c0;
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        .notice-text strong {
+            color: #d9faf6;
+        }
+
+        .messages {
+            display: grid;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+
+        .message {
+            padding: 13px 15px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.8;
+        }
+
+        .message.error {
+            color: #ffd9dd;
+            background: rgba(190,55,72,.14);
+            border: 1px solid rgba(190,55,72,.28);
+        }
+
+        .picker {
+            padding: clamp(20px, 5vw, 32px);
+            text-align: center;
+            border: 1.5px dashed rgba(45,212,191,.28);
+            border-radius: 20px;
+            background: rgba(0,0,0,.10);
+        }
+
+        .upload-icon {
+            width: 66px;
+            height: 66px;
+            margin: 0 auto 15px;
+            display: grid;
+            place-items: center;
+            border-radius: 19px;
+            background: rgba(45,212,191,.08);
+            border: 1px solid rgba(45,212,191,.13);
+        }
+
+        .upload-icon img {
+            width: 34px;
+            height: 34px;
+        }
+
+        .picker h2 {
+            margin: 0 0 7px;
+            font-size: 18px;
+        }
+
+        .picker p {
+            margin: 0 0 20px;
+            color: #809c9c;
+            font-size: 12px;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 52px;
+            padding: 0 18px;
+            border-radius: 13px;
+            cursor: pointer;
+            color: #05211e;
+            background: #2dd4bf;
+            font-weight: 900;
+            transition: .2s ease;
+        }
+
+        .file-label:hover {
+            background: #5eead4;
+            transform: translateY(-1px);
+        }
+
+        #excel_file {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .file-info {
+            display: none;
+            margin-top: 14px;
+            padding: 12px 14px;
+            text-align: right;
+            border-radius: 12px;
+            background: rgba(255,255,255,.035);
+            border: 1px solid rgba(148,163,184,.10);
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-name {
+            color: #dffaf6;
+            font-size: 13px;
+            font-weight: 800;
+            overflow-wrap: anywhere;
+        }
+
+        .file-size {
+            margin-top: 4px;
+            color: #789392;
+            font-size: 11px;
+        }
+
+        .submit {
+            width: 100%;
+            min-height: 50px;
+            margin-top: 18px;
+            border: 0;
+            border-radius: 13px;
+            color: #04211e;
+            background: #5eead4;
+            font-family: inherit;
+            font-size: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            transition: .2s ease;
+        }
+
+        .submit:hover {
+            background: #99f6e4;
+            transform: translateY(-1px);
+        }
+
+        .submit:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .rules {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .rule {
+            padding: 13px;
+            border-radius: 13px;
+            background: rgba(255,255,255,.025);
+            border: 1px solid rgba(148,163,184,.07);
+        }
+
+        .rule strong {
+            display: block;
+            color: #c8e9e6;
+            font-size: 12px;
+            margin-bottom: 4px;
+        }
+
+        .rule span {
+            color: #708a89;
+            font-size: 11px;
+        }
+
+        @media (max-width: 650px) {
+            .page {
+                width: min(100% - 16px, 900px);
+                padding-top: 16px;
+            }
+
+            .topbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .back {
+                width: 100%;
+            }
+
+            .rules {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <div class="topbar">
+
+        <div></div>
+
+        <a class="back"
+           href="{{ url_for('admin.books') }}">
+            بازگشت به مدیریت کتاب‌ها
+        </a>
+
+    </div>
+
+
+    <section class="card">
+
+        <header class="header">
+
+            <h1>
+                ورود کتاب‌ها از Excel
+            </h1>
+
+            <p>
+                فایل کتابخانه را انتخاب کنید.
+                سامانه ابتدا فایل را بررسی می‌کند و
+                قبل از هرگونه ثبت در دیتابیس، پیش‌نمایش اطلاعات را نمایش می‌دهد.
+            </p>
+
+        </header>
+
+
+        <div class="notice">
+
+            <div class="notice-icon">i</div>
+
+            <div class="notice-text">
+                <strong>اطلاعات شما قبل از ثبت بررسی می‌شود.</strong>
+                انتخاب فایل به‌تنهایی هیچ کتابی را وارد دیتابیس نمی‌کند.
+                ثبت نهایی فقط پس از بررسی و تأیید انجام خواهد شد.
+            </div>
+
+        </div>
+
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="messages">
+
+                    {% for category, message in messages %}
+
+                        <div class="message {{ category }}">
+                            {{ message }}
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+
+        <form method="POST"
+              enctype="multipart/form-data">
+
+            {{ form.hidden_tag() }}
+
+
+            <div class="picker">
+
+                <div class="upload-icon">
+
+                    <img
+                        src="{{ url_for('static', filename='images/excel.svg') }}"
+                        alt="Excel"
+                    >
+
+                </div>
+
+                <h2>
+                    فایل Excel کتاب‌ها را انتخاب کنید
+                </h2>
+
+                <p>
+                    فرمت مجاز: XLSX — حداکثر حجم: ۱۰ مگابایت
+                </p>
+
+
+                <label class="file-label"
+                       for="excel_file">
+                    انتخاب فایل Excel
+                </label>
+
+                <input
+                    id="excel_file"
+                    type="file"
+                    name="excel_file"
+                    accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    required
+                >
+
+
+                <div id="fileInfo"
+                     class="file-info">
+
+                    <div id="fileName"
+                         class="file-name"></div>
+
+                    <div id="fileSize"
+                         class="file-size"></div>
+
+                </div>
+
+            </div>
+
+
+            <button
+                id="submitButton"
+                class="submit"
+                type="submit"
+                disabled>
+                بررسی فایل و نمایش پیش‌نمایش
+            </button>
+
+        </form>
+
+        <div class="rules">
+
+            <div class="rule">
+                <strong>۱ — بررسی</strong>
+                <span>فرمت و حجم فایل کنترل می‌شود.</span>
+            </div>
+
+            <div class="rule">
+                <strong>۲ — پیش‌نمایش</strong>
+                <span>ساختار Sheetها نمایش داده می‌شود.</span>
+            </div>
+
+            <div class="rule">
+                <strong>۳ — ثبت</strong>
+                <span>ثبت نهایی بعد از تأیید انجام می‌شود.</span>
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<script>
+    const input = document.getElementById("excel_file");
+    const info = document.getElementById("fileInfo");
+    const nameBox = document.getElementById("fileName");
+    const sizeBox = document.getElementById("fileSize");
+    const submit = document.getElementById("submitButton");
+
+    input.addEventListener("change", function () {
+
+        const file = this.files && this.files[0];
+
+        if (!file) {
+            info.classList.remove("show");
+            submit.disabled = true;
+            return;
+        }
+
+        nameBox.textContent = file.name;
+
+        const mb = file.size / (1024 * 1024);
+
+        sizeBox.textContent =
+            "حجم فایل: " + mb.toFixed(2) + " مگابایت";
+
+        info.classList.add("show");
+
+        submit.disabled = false;
+    });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environment
+venv/
+.venv/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Flask / local instance
+instance/
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+logs/
+*.log
+
+# Backups
+backups/
+*.backup
+*.before-*
+*.before-*.py
+
+# Temporary / dumps
+routes_dump.txt
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Old source backups
+*.py.backup*
+*.py.before-*
+
+# Old UI snapshots
+static/images/icon-backup-before-background/
+routes.py.before_student_fix

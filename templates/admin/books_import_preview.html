@@ -1,0 +1,943 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>بررسی فایل Excel | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        :root {
+            --bg: #061619;
+            --surface: #0a2024;
+            --surface2: #0e2a2f;
+            --border: rgba(105,201,207,.15);
+            --border2: rgba(105,201,207,.28);
+            --text: #f2fbfb;
+            --muted: #8eabad;
+            --accent: #35c4ca;
+            --accent2: #75e8db;
+            --success: #4ade80;
+            --warning: #d9ad61;
+            --danger: #df6975;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background:
+                radial-gradient(
+                    700px 450px at 90% 0%,
+                    rgba(53,196,202,.10),
+                    transparent 70%
+                ),
+                var(--bg);
+            color: var(--text);
+            font-family: Vazirmatn, Tahoma, sans-serif;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .container {
+            width: min(1250px, calc(100% - 28px));
+            margin: 28px auto 60px;
+        }
+
+        .header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 22px;
+        }
+
+        .eyebrow {
+            margin-bottom: 7px;
+            color: var(--accent);
+            font-size: 11px;
+            font-weight: 800;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(25px,5vw,36px);
+            font-weight: 900;
+        }
+
+        .subtitle {
+            margin: 8px 0 0;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 2;
+        }
+
+        .actions {
+            display: flex;
+            gap: 9px;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 43px;
+            padding: 0 16px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: rgba(10,32,36,.8);
+            color: #c6dddd;
+            font-size: 12px;
+            transition: .18s ease;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .back:hover {
+            background: var(--surface2);
+            border-color: var(--border2);
+            transform: translateY(-1px);
+        }
+
+        .file-card {
+            display: grid;
+            grid-template-columns: minmax(0,1fr) auto;
+            gap: 20px;
+            padding: 22px;
+            margin-bottom: 18px;
+            border: 1px solid var(--border);
+            border-radius: 18px;
+            background:
+                linear-gradient(
+                    145deg,
+                    rgba(18,52,58,.78),
+                    rgba(10,32,36,.90)
+                );
+        }
+
+        .file-name {
+            font-size: 17px;
+            font-weight: 900;
+            overflow-wrap: anywhere;
+        }
+
+        .file-size {
+            margin-top: 7px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            align-self: center;
+            padding: 9px 13px;
+            border: 1px solid rgba(74,222,128,.18);
+            border-radius: 12px;
+            background: rgba(74,222,128,.06);
+            color: #8af0a8;
+            font-size: 11px;
+            font-weight: 800;
+            white-space: nowrap;
+        }
+
+        .status.bad {
+            border-color: rgba(223,105,117,.25);
+            background: rgba(223,105,117,.07);
+            color: #ff9da7;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            box-shadow: 0 0 12px rgba(74,222,128,.65);
+        }
+
+        .status.bad .status-dot {
+            background: var(--danger);
+            box-shadow: 0 0 12px rgba(223,105,117,.65);
+        }
+
+        .notice {
+            margin-bottom: 20px;
+            padding: 17px 19px;
+            border: 1px solid rgba(217,173,97,.18);
+            border-radius: 15px;
+            background: rgba(217,173,97,.055);
+            color: #d9c9aa;
+            font-size: 11px;
+            line-height: 2;
+        }
+
+        .notice strong {
+            color: #e4c887;
+        }
+
+        .summary {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-card {
+            padding: 18px;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            background: rgba(10,32,36,.82);
+        }
+
+        .summary-label {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .summary-value {
+            margin-top: 7px;
+            color: var(--accent);
+            font-size: 25px;
+            font-weight: 900;
+        }
+
+        .summary-card.error .summary-value {
+            color: var(--danger);
+        }
+
+        .summary-card.warning .summary-value {
+            color: var(--warning);
+        }
+
+        .summary-card.success .summary-value {
+            color: var(--success);
+        }
+
+        .section {
+            margin-bottom: 20px;
+            border: 1px solid var(--border);
+            border-radius: 19px;
+            overflow: hidden;
+            background: rgba(10,32,36,.82);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 19px 21px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 900;
+        }
+
+        .section-description {
+            margin: 4px 0 0;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .sheet-meta {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .badge {
+            padding: 6px 9px;
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            background: rgba(53,196,202,.055);
+            color: #9fc1c2;
+            font-size: 10px;
+        }
+
+        .badge strong {
+            color: var(--accent);
+        }
+
+        .sheet-state {
+            padding: 15px 21px;
+            border-bottom: 1px solid rgba(105,201,207,.08);
+            font-size: 11px;
+        }
+
+        .sheet-state.ok {
+            color: #8af0a8;
+            background: rgba(74,222,128,.035);
+        }
+
+        .sheet-state.warning {
+            color: #e7ca8b;
+            background: rgba(217,173,97,.035);
+        }
+
+        .sheet-state.error {
+            color: #ff9da7;
+            background: rgba(223,105,117,.045);
+        }
+
+        .issues {
+            padding: 15px 21px;
+            border-bottom: 1px solid rgba(105,201,207,.08);
+        }
+
+        .issue {
+            display: grid;
+            grid-template-columns: auto minmax(0,1fr);
+            gap: 10px;
+            padding: 11px 12px;
+            margin-bottom: 8px;
+            border-radius: 11px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .issue:last-child {
+            margin-bottom: 0;
+        }
+
+        .issue-level {
+            min-width: 48px;
+            height: 25px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            font-size: 9px;
+            font-weight: 900;
+        }
+
+        .issue-level.error {
+            background: rgba(223,105,117,.12);
+            color: #ff9da7;
+        }
+
+        .issue-level.warning {
+            background: rgba(217,173,97,.12);
+            color: #e7ca8b;
+        }
+
+        .issue-message {
+            color: #cbdedf;
+            font-size: 10px;
+            line-height: 1.9;
+        }
+
+        .issue-location {
+            margin-top: 3px;
+            color: #718b8d;
+            font-size: 9px;
+        }
+
+        .table-wrap {
+            width: 100%;
+            max-height: 520px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        table {
+            width: 100%;
+            min-width: 720px;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 12px 14px;
+            border-bottom: 1px solid rgba(105,201,207,.08);
+            text-align: right;
+            vertical-align: middle;
+            white-space: nowrap;
+            font-size: 11px;
+        }
+
+        th {
+            position: sticky;
+            top: 0;
+            z-index: 2;
+            background: #102e33;
+            color: var(--accent);
+            font-weight: 900;
+        }
+
+        td {
+            color: #cbdedf;
+        }
+
+        tbody tr:hover td {
+            background: rgba(53,196,202,.035);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .row-number {
+            width: 50px;
+            color: #668487;
+            text-align: center;
+        }
+
+        .empty {
+            padding: 30px 20px;
+            text-align: center;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .ready {
+            padding: 22px;
+        }
+
+        .ready-grid {
+            display: grid;
+            grid-template-columns: repeat(3,1fr);
+            gap: 12px;
+            margin-top: 15px;
+        }
+
+        .ready-item {
+            padding: 15px;
+            border: 1px solid rgba(105,201,207,.10);
+            border-radius: 14px;
+            background: rgba(255,255,255,.025);
+        }
+
+        .ready-item strong {
+            display: block;
+            margin-bottom: 5px;
+            color: #d9f8f5;
+            font-size: 12px;
+        }
+
+        .ready-item span {
+            color: #789394;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        .ready-state {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 14px 15px;
+            border-radius: 13px;
+            background: rgba(53,196,202,.055);
+            border: 1px solid rgba(53,196,202,.12);
+            color: #a9d8d6;
+            font-size: 11px;
+            line-height: 1.9;
+        }
+
+        .ready-state.good span {
+            color: var(--success);
+        }
+
+        .ready-state.bad {
+            background: rgba(223,105,117,.055);
+            border-color: rgba(223,105,117,.15);
+            color: #e7b1b7;
+        }
+
+        .ready-state.bad span {
+            color: var(--danger);
+        }
+
+        .footer-note {
+            margin-top: 22px;
+            color: #667f81;
+            text-align: center;
+            font-size: 10px;
+            line-height: 2;
+        }
+
+        @media (max-width: 850px) {
+            .summary {
+                grid-template-columns: repeat(2,1fr);
+            }
+        }
+
+        @media (max-width: 700px) {
+            .container {
+                width: min(100% - 18px,1250px);
+                margin-top: 18px;
+            }
+
+            .header {
+                flex-direction: column;
+            }
+
+            .actions {
+                width: 100%;
+                justify-content: stretch;
+            }
+
+            .back {
+                width: 100%;
+            }
+
+            .file-card {
+                grid-template-columns: 1fr;
+            }
+
+            .status {
+                justify-self: start;
+            }
+
+            .summary {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .section-header {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .ready-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .summary {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <header class="header">
+
+        <div>
+            <div class="eyebrow">
+                کتابخانه ۱۳ آبان
+            </div>
+
+            <h1>
+                بررسی فایل Excel
+            </h1>
+
+            <p class="subtitle">
+                فایل قبل از هرگونه ثبت در پایگاه داده بررسی می‌شود.
+            </p>
+        </div>
+
+        <div class="actions">
+
+            <a class="back"
+               href="{{ url_for('admin.books_import') }}">
+                انتخاب فایل دیگر
+            </a>
+
+            <form method="post"
+                  action="{{ url_for('admin.books_import_cancel') }}"
+                  style="margin:0;">
+
+                {{ csrf_token() }}
+
+                <button type="submit" class="back">
+                    لغو و حذف فایل
+                </button>
+
+            </form>
+
+        </div>
+
+    </header>
+
+
+    <section class="file-card">
+
+        <div>
+            <div class="file-name">
+                {{ original_name }}
+            </div>
+
+            <div class="file-size">
+                حجم:
+                {{ "%.2f"|format(file_size / 1024 / 1024) }}
+                مگابایت
+            </div>
+        </div>
+
+        {% if validation.can_continue %}
+
+            <div class="status">
+                <span class="status-dot"></span>
+                فایل آماده ادامه بررسی است
+            </div>
+
+        {% else %}
+
+            <div class="status bad">
+                <span class="status-dot"></span>
+                فایل نیاز به اصلاح دارد
+            </div>
+
+        {% endif %}
+
+    </section>
+
+
+    <div class="notice">
+
+        <strong>مرحله بررسی:</strong>
+
+        این صفحه فقط ساختار فایل را بررسی و پیش‌نمایش می‌کند.
+        هیچ کتابی در این مرحله وارد پایگاه داده نشده است.
+
+    </div>
+
+
+    <section class="summary">
+
+        <div class="summary-card">
+            <div class="summary-label">
+                تعداد Sheet
+            </div>
+            <div class="summary-value">
+                {{ validation.sheet_count }}
+            </div>
+        </div>
+
+        <div class="summary-card success">
+            <div class="summary-label">
+                Sheet قابل استفاده
+            </div>
+            <div class="summary-value">
+                {{ validation.usable_sheet_count }}
+            </div>
+        </div>
+
+        <div class="summary-card error">
+            <div class="summary-label">
+                خطاهای جدی
+            </div>
+            <div class="summary-value">
+                {{ validation.total_errors }}
+            </div>
+        </div>
+
+        <div class="summary-card warning">
+            <div class="summary-label">
+                هشدارها
+            </div>
+            <div class="summary-value">
+                {{ validation.total_warnings }}
+            </div>
+        </div>
+
+    </section>
+
+
+    {% for sheet in sheets %}
+
+        {% set validation_sheet = namespace(data=None) %}
+
+        {% for item in validation.sheets %}
+
+            {% if item.name == sheet.name %}
+                {% set validation_sheet.data = item %}
+            {% endif %}
+
+        {% endfor %}
+
+
+        <section class="section">
+
+            <div class="section-header">
+
+                <div>
+                    <h2 class="section-title">
+                        Sheet: {{ sheet.name }}
+                    </h2>
+
+                    <p class="section-description">
+                        خلاصه، وضعیت اعتبارسنجی و نمونه اطلاعات
+                    </p>
+                </div>
+
+                <div class="sheet-meta">
+
+                    <div class="badge">
+                        ردیف:
+                        <strong>{{ sheet.row_count }}</strong>
+                    </div>
+
+                    <div class="badge">
+                        ستون:
+                        <strong>{{ sheet.column_count }}</strong>
+                    </div>
+
+                    <div class="badge">
+                        نمایش:
+                        <strong>{{ sheet.rows|length }}</strong>
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            {% if validation_sheet.data %}
+
+                {% if validation_sheet.data.usable %}
+
+                    <div class="sheet-state ok">
+                        ✓ این Sheet از نظر ساختاری قابل استفاده است.
+                    </div>
+
+                {% elif validation_sheet.data.issues %}
+
+                    <div class="sheet-state error">
+                        ✕ این Sheet فعلاً قابل استفاده نیست و باید خطاهای آن بررسی شود.
+                    </div>
+
+                {% else %}
+
+                    <div class="sheet-state warning">
+                        وضعیت Sheet نیاز به بررسی دارد.
+                    </div>
+
+                {% endif %}
+
+
+                {% if validation_sheet.data.issues %}
+
+                    <div class="issues">
+
+                        {% for issue in validation_sheet.data.issues %}
+
+                            <div class="issue">
+
+                                <div class="issue-level {{ issue.level }}">
+                                    {% if issue.level == "error" %}
+                                        خطا
+                                    {% else %}
+                                        هشدار
+                                    {% endif %}
+                                </div>
+
+                                <div class="issue-message">
+
+                                    {{ issue.message }}
+
+                                    {% if issue.row or issue.column %}
+
+                                        <div class="issue-location">
+
+                                            {% if issue.row %}
+                                                ردیف: {{ issue.row }}
+                                            {% endif %}
+
+                                            {% if issue.column %}
+                                                {% if issue.row %} — {% endif %}
+                                                ستون: {{ issue.column }}
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+            {% endif %}
+
+
+            {% if sheet.empty %}
+
+                <div class="empty">
+                    این Sheet اطلاعات قابل استفاده‌ای ندارد.
+                </div>
+
+            {% else %}
+
+                <div class="table-wrap">
+
+                    <table>
+
+                        <thead>
+
+                            <tr>
+
+                                <th class="row-number">
+                                    #
+                                </th>
+
+                                {% for header in sheet.headers %}
+
+                                    <th>
+                                        {{ header if header else "بدون عنوان" }}
+                                    </th>
+
+                                {% endfor %}
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            {% for row in sheet.rows[1:] %}
+
+                                <tr>
+
+                                    <td class="row-number">
+                                        {{ loop.index }}
+                                    </td>
+
+                                    {% for cell in row %}
+
+                                        <td>
+                                            {{ cell if cell is not none else "" }}
+                                        </td>
+
+                                    {% endfor %}
+
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    {% endfor %}
+
+
+    <section class="section">
+
+        <div class="section-header">
+
+            <div>
+                <h2 class="section-title">
+                    وضعیت ادامه فرآیند
+                </h2>
+
+                <p class="section-description">
+                    نتیجه اعتبارسنجی ساختاری فایل
+                </p>
+            </div>
+
+        </div>
+
+        <div class="ready">
+
+            {% if validation.can_continue %}
+
+                <div class="ready-state good">
+                    <span>●</span>
+                    فایل از نظر ساختاری آماده ورود به مرحله بعد است؛
+                    ثبت نهایی هنوز انجام نشده است.
+                </div>
+
+            {% else %}
+
+                <div class="ready-state bad">
+                    <span>●</span>
+                    به دلیل وجود خطاهای جدی، فایل فعلاً اجازه ورود به مرحله ثبت نهایی را ندارد.
+                </div>
+
+            {% endif %}
+
+
+            <div class="ready-grid">
+
+                <div class="ready-item">
+
+                    <strong>
+                        ساختار کتاب
+                    </strong>
+
+                    <span>
+                        ستون‌های واقعی کتاب پس از دریافت Excel نهایی تعیین می‌شوند.
+                    </span>
+
+                </div>
+
+
+                <div class="ready-item">
+
+                    <strong>
+                        کنترل تکراری‌ها
+                    </strong>
+
+                    <span>
+                        در مرحله بعد رکوردهای تکراری بر اساس ساختار واقعی فایل کنترل خواهند شد.
+                    </span>
+
+                </div>
+
+
+                <div class="ready-item">
+
+                    <strong>
+                        ثبت تراکنشی
+                    </strong>
+
+                    <span>
+                        ثبت نهایی باید یکپارچه انجام شود تا اطلاعات ناقص وارد پایگاه داده نشود.
+                    </span>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <div class="footer-note">
+        سامانه مدیریت کتابخانه ۱۳ آبان
+    </div>
+
+</div>
+
+</body>
+</html>

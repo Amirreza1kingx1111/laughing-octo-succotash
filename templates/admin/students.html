@@ -1,0 +1,527 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>اعضای کتابخانه | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html,
+        body {
+            margin: 0;
+            min-height: 100%;
+            font-family: "Vazirmatn", Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right,
+                    rgba(20,184,166,.13),
+                    transparent 34%),
+                radial-gradient(circle at bottom left,
+                    rgba(14,116,144,.10),
+                    transparent 30%),
+                #07141a;
+            color: #e8f4f3;
+        }
+
+        a,
+        button,
+        input {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .page {
+            width: min(1250px, calc(100% - 28px));
+            margin: auto;
+            padding: 30px 0 60px;
+        }
+
+        .topbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 18px;
+            margin-bottom: 22px;
+        }
+
+        h1 {
+            margin: 0;
+            font-size: clamp(25px, 5vw, 34px);
+            font-weight: 800;
+        }
+
+        .subtitle {
+            margin-top: 7px;
+            color: #8da6aa;
+            font-size: 14px;
+        }
+
+        .actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 10px 16px;
+            border-radius: 13px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+        }
+
+        .primary {
+            color: #03211e;
+            background: #2dd4bf;
+        }
+
+        .primary:hover {
+            background: #5eead4;
+        }
+
+        .secondary {
+            color: #9ff8e9;
+            border: 1px solid rgba(94,234,212,.20);
+            background: rgba(20,184,166,.07);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 18px;
+        }
+
+        .stat {
+            position: relative;
+            overflow: hidden;
+            padding: 20px;
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 18px;
+            background: rgba(8,27,34,.92);
+            box-shadow:
+                0 18px 45px rgba(0,0,0,.15),
+                inset 0 1px 0 rgba(255,255,255,.02);
+        }
+
+        .stat::after {
+            content: "";
+            position: absolute;
+            left: -35px;
+            bottom: -55px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(45,212,191,.07);
+            filter: blur(20px);
+        }
+
+        .stat-label {
+            color: #829ca0;
+            font-size: 13px;
+        }
+
+        .stat-value {
+            margin-top: 8px;
+            font-size: 28px;
+            font-weight: 800;
+        }
+
+        .panel {
+            padding: 22px;
+            border: 1px solid rgba(148,163,184,.12);
+            border-radius: 20px;
+            background: rgba(8,27,34,.94);
+            box-shadow:
+                0 25px 70px rgba(0,0,0,.18),
+                inset 0 1px 0 rgba(255,255,255,.02);
+        }
+
+        .search {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .search input {
+            flex: 1;
+            min-width: 0;
+            min-height: 48px;
+            padding: 12px 15px;
+            border-radius: 13px;
+            border: 1px solid rgba(148,163,184,.16);
+            outline: none;
+            color: #e8f4f3;
+            background: #0b2028;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        .search input:focus {
+            border-color: rgba(45,212,191,.65);
+            box-shadow: 0 0 0 3px rgba(20,184,166,.08);
+        }
+
+        .search button {
+            min-width: 105px;
+            border: 0;
+            border-radius: 13px;
+            padding: 0 20px;
+            color: #03211e;
+            background: #2dd4bf;
+            font-family: inherit;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .search button:hover {
+            background: #5eead4;
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid rgba(148,163,184,.08);
+            border-radius: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 900px;
+        }
+
+        th,
+        td {
+            padding: 15px 14px;
+            text-align: right;
+            border-bottom: 1px solid rgba(148,163,184,.08);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        th {
+            color: #94b0b3;
+            font-weight: 700;
+            background: rgba(20,184,166,.035);
+        }
+
+        td {
+            color: #d6e7e6;
+        }
+
+        tbody tr {
+            transition: background .15s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(20,184,166,.035);
+        }
+
+        tbody tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .member-name {
+            font-weight: 800;
+            color: #f0fbfa;
+        }
+
+        .code {
+            direction: ltr;
+            text-align: right;
+            font-family: monospace;
+            color: #9ff8e9;
+        }
+
+        .school {
+            color: #b9d1d0;
+        }
+
+        .class-info {
+            color: #9eb5b7;
+        }
+
+        .loan-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 32px;
+            min-height: 28px;
+            padding: 4px 9px;
+            border-radius: 9px;
+            background: rgba(45,212,191,.08);
+            border: 1px solid rgba(45,212,191,.13);
+            color: #8ff3e3;
+            font-weight: 800;
+        }
+
+        .status {
+            display: inline-flex;
+            align-items: center;
+            gap: 7px;
+            color: #9ff8e9;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: #2dd4bf;
+            box-shadow: 0 0 12px rgba(45,212,191,.55);
+        }
+
+        .empty {
+            padding: 55px 20px;
+            text-align: center;
+            color: #789296;
+            border: 1px dashed rgba(94,234,212,.15);
+            border-radius: 15px;
+        }
+
+        .empty-title {
+            color: #b8cccd;
+            font-size: 16px;
+            font-weight: 800;
+            margin-bottom: 7px;
+        }
+
+        .empty-text {
+            font-size: 13px;
+        }
+
+        @media (max-width: 700px) {
+            .topbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+            }
+
+            .stats {
+                grid-template-columns: 1fr;
+            }
+
+            .search {
+                flex-direction: column;
+            }
+
+            .search button {
+                min-height: 48px;
+            }
+
+            .panel {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="page">
+
+    <div class="topbar">
+
+        <div>
+            <h1>اعضای کتابخانه</h1>
+
+            <div class="subtitle">
+                مدیریت، جستجو و بررسی اعضای کتابخانه ۱۳ آبان
+            </div>
+        </div>
+
+        <div class="actions">
+
+            <a class="btn primary"
+               href="{{ url_for('admin.student_create') }}">
+                افزودن عضو جدید
+            </a>
+
+            <a class="btn secondary"
+               href="{{ url_for('admin.dashboard') }}">
+                بازگشت به مدیریت
+            </a>
+
+        </div>
+
+    </div>
+
+    <section class="stats">
+
+        <div class="stat">
+            <div class="stat-label">
+                کل اعضا
+            </div>
+
+            <div class="stat-value">
+                {{ student_count }}
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                نتیجه جستجو
+            </div>
+
+            <div class="stat-value">
+                {{ students|length }}
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-label">
+                امانت‌های فعال سامانه
+            </div>
+
+            <div class="stat-value">
+                {{ active_loan_count }}
+            </div>
+        </div>
+
+    </section>
+
+    <section class="panel">
+
+        <form class="search" method="GET">
+
+            <input
+                type="search"
+                name="q"
+                value="{{ query }}"
+                placeholder="نام، نام خانوادگی، کد دانش‌آموزی یا مدرسه..."
+                autocomplete="off"
+            >
+
+            <button type="submit">
+                جستجو
+            </button>
+
+        </form>
+
+        {% if students %}
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>عضو</th>
+                        <th>کد دانش‌آموزی</th>
+                        <th>مدرسه</th>
+                        <th>پایه / کلاس</th>
+                        <th>امانت فعال</th>
+                        <th>وضعیت</th>
+                    </tr>
+
+                </thead>
+
+                <tbody>
+
+                {% for student in students %}
+
+                    <tr>
+
+                        <td>
+                            <a
+                                class="member-name"
+                                href="{{ url_for('admin.student_detail', student_id=student.id) }}"
+                                style="text-decoration:none;color:inherit;"
+                            >
+                                {{ student.first_name }}
+                                {{ student.last_name }}
+                            </a>
+                        </td>
+
+                        <td class="code">
+                            {{ student.student_code }}
+                        </td>
+
+                        <td class="school">
+                            {{ student.school.name }}
+                        </td>
+
+                        <td class="class-info">
+                            {{ student.grade }}
+                            /
+                            {{ student.class_name }}
+                        </td>
+
+                        <td>
+                            <span class="loan-badge">
+                                {{ student.loans
+                                   |selectattr("status", "equalto", "active")
+                                   |list
+                                   |length }}
+                            </span>
+                        </td>
+
+                        <td>
+
+                            <span class="status">
+                                <span class="status-dot"></span>
+                                فعال
+                            </span>
+
+                        </td>
+
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+        {% else %}
+
+        <div class="empty">
+
+            <div class="empty-title">
+                {% if query %}
+                    عضوی پیدا نشد
+                {% else %}
+                    هنوز عضوی ثبت نشده است
+                {% endif %}
+            </div>
+
+            <div class="empty-text">
+
+                {% if query %}
+                    برای عبارت «{{ query }}» نتیجه‌ای پیدا نشد.
+                {% else %}
+                    می‌توانید اولین عضو را از طریق گزینه «افزودن عضو جدید» ثبت کنید.
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+</body>
+</html>

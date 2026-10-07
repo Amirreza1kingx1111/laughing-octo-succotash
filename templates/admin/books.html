@@ -1,0 +1,312 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>کتاب‌ها | کتابخانه ۱۳ آبان</title>
+
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='css/fonts.css') }}">
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: Vazirmatn, sans-serif;
+            color: #edfafa;
+            background:
+                radial-gradient(
+                    circle at 85% 0%,
+                    rgba(45, 212, 191, .12),
+                    transparent 32%
+                ),
+                linear-gradient(
+                    145deg,
+                    #041417,
+                    #071f24 55%,
+                    #041214
+                );
+        }
+
+        .page {
+            width: min(1200px, calc(100% - 28px));
+            margin: auto;
+            padding: 28px 0 50px;
+        }
+
+        .topbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 25px;
+        }
+
+        .title h1 {
+            margin: 0;
+            font-size: clamp(25px, 4vw, 38px);
+            font-weight: 900;
+        }
+
+        .title p {
+            margin: 8px 0 0;
+            color: #8fa9aa;
+            font-size: 13px;
+        }
+
+        .back {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 43px;
+            padding: 0 17px;
+            border-radius: 12px;
+            color: #dff9f5;
+            text-decoration: none;
+            border: 1px solid rgba(148, 163, 184, .16);
+            background: rgba(255,255,255,.04);
+            transition: .2s ease;
+        }
+
+        .back:hover {
+            background: rgba(255,255,255,.08);
+            transform: translateY(-1px);
+        }
+
+        .toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 18px;
+            margin-bottom: 18px;
+            border: 1px solid rgba(92, 224, 216, .12);
+            border-radius: 18px;
+            background: rgba(8, 31, 35, .82);
+        }
+
+        .search {
+            flex: 1;
+            position: relative;
+        }
+
+        .search input {
+            width: 100%;
+            height: 46px;
+            border: 1px solid rgba(148, 163, 184, .15);
+            border-radius: 12px;
+            outline: none;
+            padding: 0 16px;
+            color: #ecffff;
+            background: rgba(0,0,0,.16);
+            font-family: inherit;
+        }
+
+        .search input:focus {
+            border-color: rgba(45, 212, 191, .45);
+        }
+
+        .excel {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            white-space: nowrap;
+            min-height: 46px;
+            padding: 0 18px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 800;
+            color: #03211e;
+            background: #2dd4bf;
+            transition: .2s ease;
+        }
+
+        .excel:hover {
+            background: #5eead4;
+            transform: translateY(-1px);
+        }
+
+        .empty {
+            min-height: 380px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 35px;
+            border: 1px dashed rgba(92, 224, 216, .18);
+            border-radius: 22px;
+            background: rgba(7, 25, 29, .65);
+        }
+
+        .empty-inner {
+            max-width: 540px;
+        }
+
+        .book-icon {
+            width: 72px;
+            height: 72px;
+            margin: 0 auto 20px;
+            display: grid;
+            place-items: center;
+            border-radius: 20px;
+            background: rgba(45, 212, 191, .08);
+            border: 1px solid rgba(45, 212, 191, .14);
+        }
+
+        .book-icon img {
+            width: 38px;
+            height: 38px;
+        }
+
+        .empty h2 {
+            margin: 0 0 10px;
+            font-size: 23px;
+        }
+
+        .empty p {
+            margin: 0 auto 22px;
+            color: #8da8a8;
+            line-height: 2;
+            font-size: 13px;
+        }
+
+        .empty-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 44px;
+            padding: 0 20px;
+            border-radius: 12px;
+            color: #dffffa;
+            text-decoration: none;
+            border: 1px solid rgba(45, 212, 191, .20);
+            background: rgba(45, 212, 191, .08);
+            transition: .2s ease;
+        }
+
+        .empty-btn:hover {
+            background: rgba(45, 212, 191, .14);
+        }
+
+        .status {
+            margin-top: 18px;
+            padding: 15px 17px;
+            border-radius: 15px;
+            color: #91aaa9;
+            background: rgba(255,255,255,.025);
+            border: 1px solid rgba(148,163,184,.08);
+            font-size: 12px;
+            line-height: 1.9;
+        }
+
+        @media (max-width: 700px) {
+            .page {
+                width: min(100% - 18px, 1200px);
+                padding-top: 18px;
+            }
+
+            .topbar {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .back,
+            .excel {
+                width: 100%;
+            }
+
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<main class="page">
+
+    <header class="topbar">
+
+        <div class="title">
+            <h1>مدیریت کتاب‌ها</h1>
+
+            <p>
+                جستجو، مشاهده و مدیریت مجموعه کتابخانه
+            </p>
+        </div>
+
+        <a class="back"
+           href="{{ url_for('admin.dashboard') }}">
+            بازگشت به داشبورد
+        </a>
+
+    </header>
+
+
+    <section class="toolbar">
+
+        <div class="search">
+            <input
+                type="search"
+                name="q"
+                placeholder="جستجوی عنوان، نویسنده، کد کتاب و..."
+                disabled
+            >
+        </div>
+
+        <a class="excel"
+           href="{{ url_for('admin.books_import') }}">
+            ورود کتاب از Excel
+        </a>
+
+    </section>
+
+
+    <section class="empty">
+
+        <div class="empty-inner">
+
+            <div class="book-icon">
+                <img
+                    src="{{ url_for('static', filename='images/books.svg') }}"
+                    alt="کتاب‌ها"
+                >
+            </div>
+
+            <h2>
+                هنوز کتابی ثبت نشده است
+            </h2>
+
+            <p>
+                وقتی فایل Excel کتابخانه آماده شد،
+                آن را از بخش ورود Excel انتخاب می‌کنیم.
+                بعد از بررسی و تأیید، کتاب‌ها در این صفحه
+                نمایش داده خواهند شد.
+            </p>
+
+            <a class="empty-btn"
+               href="{{ url_for('admin.books_import') }}">
+                رفتن به ورود Excel
+            </a>
+
+            <div class="status">
+                وضعیت فعلی: منتظر فایل واقعی کتاب‌ها
+            </div>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
